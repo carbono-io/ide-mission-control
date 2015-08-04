@@ -1,8 +1,8 @@
 {
-  "name": "referencia",
+  "name": "ide-mission-control",
   "version": "0.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "consign": "^0.1.1",
-    "express": "4.13.3"
+    "express": "4.13.3",
+    "referencia": "git+https://bitbucket.org/maquinaio/ide-development-container-manager.git"
   },
   "devDependencies": {
     "gulp": "3.9.0",
