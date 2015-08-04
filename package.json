@@ -11,11 +11,11 @@
     "email": "",
     "url": ""
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "consign": "^0.1.1",
     "express": "4.13.3",
-    "referencia": "git+https://bitbucket.org/maquinaio/ide-development-container-manager.git"
+    "ide-development-container-manager": "git+ssh://git@bitbucket.org:maquinaio/ide-development-container-manager.git"
   },
   "devDependencies": {
     "gulp": "3.9.0",
