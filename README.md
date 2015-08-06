@@ -12,3 +12,25 @@ Installation and Running
 Interfaces
 ==========
 
+* domNodeAdd()
+* domNodeRm()
+* domAttEdit()
+
+* createContainer()
+* fetchContainer()
+
+* deploy()
+
+Access Points
+=============
+
+* src/
+ Source code.
+* src/marked/
+ Marked source code.
+* gui/
+ Graphical user interface.
+* editor/
+ Text editor.
+* cli/
+ Command line interface.
