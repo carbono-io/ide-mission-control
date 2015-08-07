@@ -6,19 +6,31 @@ See Archtecture Specs for more details on MissionControl.
 
 Installation and Running
 ============
-`npm install`
-`gulp server`
+```npm install```
+```gulp serve```
+
+Tests and Dev
+=============
+```gulp nodemon```
+```gulp test```
 
 Interfaces
 ==========
 
-* domNodeAdd()
-* domNodeRm()
-* domAttEdit()
+## File
+* create()
+* delete()
+* list()
+* apNode()
+* rmNode()
+* edNodeAtt()
 
-* createContainer()
-* fetchContainer()
+## Project
+* list()
+* create()
+* fetch()
 
+## PaaS
 * deploy()
 
 Access Points

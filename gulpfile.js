@@ -4,6 +4,8 @@ var notify  = require('gulp-notify');
 var jscs    = require('gulp-jscs');
 var jshint  = require('gulp-jshint');
 var exec    = require('child_process').exec;
+var nodemon = require('gulp-nodemon');
+var mocha    = require('gulp-mocha');
 
 gulp.task('jscs', function() {
   gulp.src('*.js')
@@ -35,4 +37,17 @@ gulp.task('server', function(cb) {
     console.log(stderr);
     cb(err);
   });
+});
+
+gulp.task('nodemon', function () {
+    nodemon({
+        script: 'index.js',
+        ext: 'js',
+    });
+});
+
+gulp.task('test', function () {
+    return gulp.src('test/test-*.js', {read: false})
+        // gulp-mocha needs filepaths so you can't have any plugins before it 
+        .pipe(mocha());
 });
