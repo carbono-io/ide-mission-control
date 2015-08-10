@@ -32,3 +32,7 @@ exports.edNodeAtt = function () {
         it: 'is done',
     };
 };
+
+exports.marked =  function(req, res) {
+    res.send('Marked source code.');
+};

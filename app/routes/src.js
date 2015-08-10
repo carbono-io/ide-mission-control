@@ -1,24 +1,16 @@
 module.exports = function (app) {
 
-    app.get('/', function(req, res) {
-        res.send('You are doing it wrong! Try http://carbono.io/');
-    });
+    var src = app.controllers.src;
+
+    app.get('/', src.root);
     
-    app.get('/src', function(req, res) {
-        res.send('Source code.');
-    });
+    app.get('/src', src.clean);
     
-    app.get('/src/marked', function(req, res) {
-        res.send('Marked source code.');
-    });
+    app.get('/src/marked', src.marked);
     
-    app.get('/gui', function(req, res) {
-        res.send('Graphical user interface.');
-    });
+    app.get('/gui', src.gui);
     
-    app.get('/cli', function(req, res) {
-        res.send('Command line interface.');
-    });
+    app.get('/cli', src.cli);
     
     return this;    
-}
+};
