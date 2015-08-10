@@ -13,7 +13,7 @@ var _connSettings = {
 // Intercept each test to connect
 beforeEach( function(done) {
 	conn = io.connect(
-	'http://localhost:3001/project', 
+	   'http://localhost:3001/project', 
 		_connSettings
 	);
 	conn.on('connect', function() {
