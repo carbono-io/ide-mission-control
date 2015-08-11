@@ -1,9 +1,7 @@
 /* global done, it, describe */
-var express = require('../node_modules/express');
 var should = require('../node_modules/should');
 var request = require('../node_modules/supertest'); 
 
-var app = express();
 var url = 'http://localhost:3000';
 
 describe('Routes - This test should work when:', function() {
