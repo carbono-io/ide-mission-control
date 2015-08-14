@@ -1,3 +1,5 @@
+var request = require('request');
+
 //mock
 exports.create = function () {
 	return {
@@ -34,5 +36,11 @@ exports.edNodeAtt = function () {
 };
 
 exports.marked =  function(req, res) {
-    res.send('Marked source code.');
+    var cmURL = 'http://192.168.99.100:32774/resources/marked'+ req.url;
+    req.pipe(request(cmURL)).pipe(res);
+};
+
+exports.clean =  function(req, res) {
+    var cmURL = 'http://192.168.99.100:32774/resources/clean'+ req.url;
+    req.pipe(request(cmURL)).pipe(res);
 };

@@ -10,10 +10,14 @@ module.exports = function (app) {
     };
 	
     this.create = function(socket){
-        socket.on('create', function() {
-            var container = dcm.create();
-            socket.emit('created', container);
+        socket.on('create', function(proj) {
+            dcm.create(proj, function(err, res){
+                if(!err){
+                    socket.emit('created', res);
+                }
+            });
         });
+    
     };
 	
     this.fetch = function(socket){

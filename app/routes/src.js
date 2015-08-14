@@ -4,9 +4,9 @@ module.exports = function (app) {
 
     app.get('/', src.root);
     
-    app.get('/src', src.clean);
+    app.use('/src', src.clean);
     
-    app.get('/src/marked', src.marked);
+    app.use('/marked', src.marked);
     
     app.get('/gui', src.gui);
     

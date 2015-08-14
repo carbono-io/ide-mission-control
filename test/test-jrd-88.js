@@ -6,36 +6,8 @@ var should = require('../node_modules/should');
 var request = require('../node_modules/supertest');
 var io = require('../node_modules/socket.io-client');
 
-var conn;
-var _connSettings = {
-    'reconnection delay' : 0,
-    'reopen delay' : 0,
-    'force new connection' : true
-};
-
 var _URL = 'http://localhost:3000';
-var _WSURL = 'http://localhost:3001/project';
-
-// Close every connection
-afterEach( function(done) {
-    if(conn && conn.connected) {
-        conn.on('connection', function() {
-            conn.on('disconnect', function() {
-                done();
-            });
-        });
-        conn.disconnect();
-    }else{
-        done();
-    }
-});
-
-// Json object test
-function assertJson(data){
-    should.exist(data);
-    data.should.be.an.instanceOf(Object);
-	data.should.not.be.equal(null);
-}
+var _WSURL = 'http://127.0.0.1:3001/project';
 
 describe('JRD-88: Implementar MissionControl', function() {
 	
@@ -57,13 +29,26 @@ describe('JRD-88: Implementar MissionControl', function() {
             );
     });
 	
-    it('Criar um novo contêiner de desenvolvimento já com o código fonte do frontend gerado pronto', function(done) {
-		conn = io.connect(_WSURL, _connSettings);
-        conn.emit('create', {name: 'test'});
-        conn.on('created', function (proj) {
-            proj.should.have.property('url', 'bla');
-			assertJson(proj);
-		});
-    });
+    // it('Criar um novo contêiner de desenvolvimento já com o código fonte do frontend gerado pronto', function(done) {
+    //     var conn = io.connect(_WSURL);
+    //     var data = {
+    //         projectId : '12312312'
+    //     }
+    //     conn.emit('create', data);
+    //     conn.on('created', function (proj) {
+    //         proj.should.have.property('containerId');
+    //         proj.should.have.property('host');
+    //         proj.should.have.property('ports');
+	// 		assertJson(proj);
+    //         done();
+	// 	});
+    //     conn.disconnect();
+    // });
 	
 });
+
+function assertJson(data){
+    should.exist(data);
+    data.should.be.an.instanceOf(Object);
+	data.should.not.be.equal(null);
+}

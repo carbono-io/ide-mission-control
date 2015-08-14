@@ -44,9 +44,14 @@ function assertJson(data){
 describe('Project WebSocket - This test should work when:', function() {
 
     it('a new project is created', function(done) {
-        conn.emit('create', {name: 'test'});
+        var proj = {
+            projectId : '12312312'
+        }
+        conn.emit('create', proj);
         conn.on('created', function (proj) {
-            proj.should.have.property('url', 'bla');
+            proj.should.have.property('containerId');
+            proj.should.have.property('host');
+            proj.should.have.property('ports');
 			assertJson(proj);
             done();
 		});
