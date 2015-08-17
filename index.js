@@ -1,17 +1,21 @@
 'use strict';
 var consign = require('consign');
 var express = require('express');
-var ws      = require('socket.io')(3001);
+var config  = require('config');
+var ws      = require('socket.io');
 var app     = express();
 
-app.ws = ws;
+var htPort = config.get('htPort');
+var wsPort = config.get('wsPort');
+
+app.ws = ws(wsPort);
 
 consign({cwd: 'app'})
     .include('controllers')
     .include('routes')
     .into(app);
 
-var server = app.listen(3000, function() {
+var server = app.listen(htPort, function() {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Mission-Control listening at http://%s:%s', host, port);

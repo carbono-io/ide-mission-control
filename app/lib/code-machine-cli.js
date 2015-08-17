@@ -1,46 +1,56 @@
 var request = require('request');
 
-//mock
-exports.create = function () {
-	return {
-        uuid: 'bla'
-    };
-};
-exports.list = function () {
-	return {
-        views: [
-            {uuid: 1},
-            {uuid: 2}
-        ]
-	};
-};
-exports.del = function () {
-	return {
-        good: 'bye',
-    };
-};
-exports.apNode = function () {
-	return {
-        uuid: '8hRSD7uyDm8302',
-    };
-};
-exports.rmNode = function () {
-	return {
-        good: 'bye',
-    };
-};
-exports.edNodeAtt = function () {
-	return {
-        it: 'is done',
-    };
-};
+module.exports = function (container) {
+    
+    if(!container.markedURL){
+        throw 'Container must contain marked url.';
+    }
 
-exports.marked =  function(req, res) {
-    var cmURL = 'http://192.168.99.100:32774/resources/marked'+ req.url;
-    req.pipe(request(cmURL)).pipe(res);
-};
-
-exports.clean =  function(req, res) {
-    var cmURL = 'http://192.168.99.100:32774/resources/clean'+ req.url;
-    req.pipe(request(cmURL)).pipe(res);
+    if(!container.cleanURL){
+        throw 'Container must contain clean url.';
+    }
+    
+    this.create = function () {
+    	return {
+            uuid: 'bla'
+        };
+    };
+    this.list = function () {
+    	return {
+            views: [
+                {uuid: 1},
+                {uuid: 2}
+            ]
+    	};
+    };
+    this.del = function () {
+    	return {
+            good: 'bye',
+        };
+    };
+    this.apNode = function () {
+    	return {
+            uuid: '8hRSD7uyDm8302',
+        };
+    };
+    this.rmNode = function () {
+    	return {
+            good: 'bye',
+        };
+    };
+    this.edNodeAtt = function () {
+    	return {
+            it: 'is done',
+        };
+    };
+    
+    this.marked =  function(req, res) {
+        var cmURL = container.markedURL + req.url;
+        req.pipe(request(cmURL)).pipe(res);
+    };
+    
+    this.clean =  function(req, res) {
+        var cmURL = container.cleanURL + req.url;
+        req.pipe(request(cmURL)).pipe(res);
+    };  
 };

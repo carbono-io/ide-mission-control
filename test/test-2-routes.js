@@ -17,18 +17,16 @@ describe('Routes - This test should work when:', function() {
     
     it('source code is available', function(done) {
         request(url)
-            .get('/src')
-            .expect(200, 
-                'Source code.',
+            .get('/src/index.html')
+            .expect(200,
                 done
             );
     });
     
     it('Marked source from code-machine is on.', function(done) {
         request(url)
-            .get('/src/marked')
-            .expect(200, 
-                'Marked source code.',
+            .get('/marked/index.html')
+            .expect(200,
                 done
             );
     });

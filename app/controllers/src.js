@@ -1,5 +1,6 @@
-var cm = require('../lib/code-machine-cli');
-
+/**
+ * @TODO Get cm from user context
+ */
 module.exports = function (app) {
 
     this.root = function (req, res) {
@@ -7,11 +8,13 @@ module.exports = function (app) {
     };
     
     this.clean = function (req, res) {
-        cm.clean(req, res);
+        if(!app.cm) return;
+        app.cm.clean(req, res);
     };
     
     this.marked = function (req, res) {
-        cm.marked(req, res);
+        if(!app.cm) return;
+        app.cm.marked(req, res);
     };
         
     this.gui = function (req, res) {

@@ -7,7 +7,6 @@ module.exports = function(app) {
         .on('connection', function (socket) {
 			project.create(socket);
 			project.list(socket);
-			project.fetch(socket);
 	});
 	
     return this;

@@ -3,36 +3,6 @@ describe */
 var io = require('../node_modules/socket.io-client');
 var should = require('../node_modules/should');
 
-var conn;
-var _connSettings = {
-    'reconnection delay' : 0,
-    'reopen delay' : 0,
-    'force new connection' : true
-};
-
-// Intercept each test to connect
-beforeEach( function(done) {
-	conn = io.connect(
-	'http://localhost:3001/file', 
-		_connSettings
-	);
-	conn.on('connect', function() {
-        done();
-    });
-	conn.on('disconnect', function() {
-        //console.log('[!] you got disconnected.');
-    });
-});
-// Close every connection
-afterEach( function(done) {
-    if(conn.connected) {
-        conn.disconnect();
-    } else {
-        //console.log('[!] no connection to break...');
-    }
-    done();
-});
-
 // Json object test
 function assertJson(data){
     should.exist(data);
@@ -42,6 +12,30 @@ function assertJson(data){
 
 // Events tester
 describe('File Websocket - This test should work when:', function() {
+
+    var conn;
+    var _connSettings = {
+        'reconnection delay' : 0,
+        'reopen delay' : 0,
+        'force new connection' : true
+    };
+  
+    beforeEach( function(done) {
+    	conn = io.connect(
+    	'http://localhost:3001/file', 
+    		_connSettings
+    	);
+    	conn.on('connect', done);
+    });
+
+    afterEach( function(done) {
+        if(conn.connected) {
+            conn.disconnect();
+        } else {
+            //console.log('[!] no connection to break...');
+        }
+        done();
+    });
 
     it('new app pages are created', function(done) {
         conn.emit('create', {name: 'test'});

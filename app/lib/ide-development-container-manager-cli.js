@@ -1,6 +1,10 @@
-var needle = require('needle');
-
-//mock
+'use strict';
+var config  = require('config')
+var request = require('request');
+/**
+ * List project Ids created.
+ * @MOCK
+ */
 exports.list = function () {
 	return {
 	    containers: [
@@ -10,22 +14,24 @@ exports.list = function () {
 	};
 };
 /**
- * Creates an docker instance and
+ * Creates and/or retrieves an docker instance and
  * returns a callback function.
  * @TODO: PArse errors and throw them.
+ * @return function (err, res)
  */
-exports.create = function (proj, cb2) {
-    var url = 'http://127.0.0.1:8000/container';
-    
-    var cb = function(err, res) {
-         cb2(err, res.body);
+exports.create = function (proj, cb) {
+    var url = config.get('dcmURL') + '/container';
+    var load ={
+        url: url,
+        formData: proj
     }
-    
-    needle.post(url, proj, cb);
-};
-exports.fetch = function () {
-	return {
-        url: 'bla',
-        supimpa: 'will get'
-    };
+    var _cb = function(err, httpResponse, body) {
+        try{
+            body = JSON.parse(body);
+        }catch(err){
+            this.err = err;
+        }
+        cb(err, body);
+    }
+    request.post(load, _cb);
 };
