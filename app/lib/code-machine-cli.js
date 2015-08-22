@@ -1,56 +1,57 @@
+'use strict';
 var request = require('request');
 
 module.exports = function (container) {
-    
-    if(!container.markedURL){
+
+    if (!container.markedURL) {
         throw 'Container must contain marked url.';
     }
 
-    if(!container.cleanURL){
+    if (!container.cleanURL) {
         throw 'Container must contain clean url.';
     }
-    
+
     this.create = function () {
-    	return {
-            uuid: 'bla'
+        return {
+            uuid: 'bla',
         };
     };
     this.list = function () {
-    	return {
+        return {
             views: [
                 {uuid: 1},
-                {uuid: 2}
-            ]
-    	};
+                {uuid: 2},
+            ],
+        };
     };
     this.del = function () {
-    	return {
+        return {
             good: 'bye',
         };
     };
     this.apNode = function () {
-    	return {
+        return {
             uuid: '8hRSD7uyDm8302',
         };
     };
     this.rmNode = function () {
-    	return {
+        return {
             good: 'bye',
         };
     };
     this.edNodeAtt = function () {
-    	return {
+        return {
             it: 'is done',
         };
     };
-    
-    this.marked =  function(req, res) {
+
+    this.marked =  function (req, res) {
         var cmURL = container.markedURL + req.url;
         req.pipe(request(cmURL)).pipe(res);
     };
-    
-    this.clean =  function(req, res) {
+
+    this.clean =  function (req, res) {
         var cmURL = container.cleanURL + req.url;
         req.pipe(request(cmURL)).pipe(res);
-    };  
+    };
 };
