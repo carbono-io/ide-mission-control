@@ -15,7 +15,7 @@ consign({cwd: 'app'})
     .include('routes')
     .into(app);
 
-var server = app.listen(htPort, function() {
+var server = app.listen(htPort, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Mission-Control listening at http://%s:%s', host, port);
