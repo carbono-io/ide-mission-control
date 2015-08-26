@@ -8,6 +8,9 @@ var app     = express();
 var htPort = config.get('htPort');
 var wsPort = config.get('wsPort');
 
+var ServiceManager = require('./app/lib/service-manager');
+global.serviceManager = new ServiceManager(process.env.ETCD_ORIGIN);
+
 app.ws = ws(wsPort);
 
 consign({cwd: 'app'})
