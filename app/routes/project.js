@@ -9,16 +9,16 @@ module.exports = function(app) {
 			project.list(socket);
 	});
 
-    // app.get('/new', function(req, res) {
-    // 	var promiseFind = serviceManager.findService('dcm');
+    app.get('/new', function(req, res) {
+    	var promiseFind = serviceManager.findService('dcm');
 
-    // 	promiseFind
-    // 		.then(function (v) {
-    // 			res.json({value: v});
-    // 		}, function (err) {
-    // 			res.json({error: err});
-    // 		});
-    // });
+    	promiseFind
+    		.then(function (v) {
+    			res.json({value: v});
+    		}, function (err) {
+    			res.json({error: err});
+    		});
+    });
 	
     return this;
 };
