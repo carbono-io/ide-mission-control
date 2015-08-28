@@ -8,8 +8,14 @@ var app     = express();
 var htPort = config.get('htPort');
 var wsPort = config.get('wsPort');
 
-var ServiceManager = require('./app/lib/service-manager');
-global.serviceManager = new ServiceManager(process.env.ETCD_ORIGIN);
+var ServiceManager = require('carbono-service-manager');
+
+if (typeof process.env.ETCD_SERVER === 'undefined') {
+    console.log('Variable ETCD_SERVER not set!');
+    console.log();
+}
+
+global.serviceManager = new ServiceManager(process.env.ETCD_SERVER);
 
 app.ws = ws(wsPort);
 

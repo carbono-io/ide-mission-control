@@ -20,7 +20,7 @@
     "q": "^1.4.1",
     "request": "^2.60.0",
     "socket.io": "^1.3.6",
-    "service-manager": "git+ssh://git@bitbucket.org/carbonoio/service-manager.git"
+    "carbono-service-manager": "^0.0.3"
   },
   "devDependencies": {
     "gulp": "3.9.0",

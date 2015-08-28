@@ -8,6 +8,17 @@ module.exports = function(app) {
 			project.create(socket);
 			project.list(socket);
 	});
+
+    // app.get('/new', function(req, res) {
+    // 	var promiseFind = serviceManager.findService('dcm');
+
+    // 	promiseFind
+    // 		.then(function (v) {
+    // 			res.json({value: v});
+    // 		}, function (err) {
+    // 			res.json({error: err});
+    // 		});
+    // });
 	
     return this;
 };
