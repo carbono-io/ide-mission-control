@@ -23,10 +23,8 @@ if (typeof process.env.ETCD_SERVER === 'undefined') {
 
     promiseFind
         .then(function (v) {
-            console.log("PROMISE OK!: " + v);
             global.dcmURL = v;
         }, function (err) {
-            console.log("PROMISE FAIL!: " + err);
             global.dcmURL = null;
             console.log(err);
         });
