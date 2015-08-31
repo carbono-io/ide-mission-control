@@ -1,5 +1,4 @@
 {
 	"htPort" : 7890,
-	"wsPort" : 7891,
-	"dcmURL" : "http://127.0.0.1:8000"
+	"wsPort" : 7891
 }
