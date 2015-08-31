@@ -1,4 +1,5 @@
 'use strict';
+var colors  = require('colors');
 var consign = require('consign');
 var express = require('express');
 var config  = require('config');
@@ -11,11 +12,13 @@ var wsPort = config.get('wsPort');
 var ServiceManager = require('carbono-service-manager');
 
 if (typeof process.env.ETCD_SERVER === 'undefined') {
-    console.log('Variable ETCD_SERVER not set!');
+    console.log('The environment variable ETCD_SERVER is not defined!'.bold.red);
+    console.log('Please, define it before continuing, otherwise the'.red);
+    console.log('integration will not work!'.red);
     console.log();
+} else {
+    global.serviceManager = new ServiceManager(process.env.ETCD_SERVER);
 }
-
-global.serviceManager = new ServiceManager(process.env.ETCD_SERVER);
 
 app.ws = ws(wsPort);
 
