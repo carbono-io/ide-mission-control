@@ -18,15 +18,18 @@ if (typeof process.env.ETCD_SERVER === 'undefined') {
     console.log();
 } else {
     global.serviceManager = new ServiceManager(process.env.ETCD_SERVER);
+
     var promiseFind = global.serviceManager.findService('dcm');
 
-	promiseFind
-		.then(function (v) {
-		    global.dcmURL = v;
-		}, function (err) {
-			global.dcmURL = null;
-			console.log(err);
-		});
+    promiseFind
+        .then(function (v) {
+            console.log("PROMISE OK!: " + v);
+            global.dcmURL = v;
+        }, function (err) {
+            console.log("PROMISE FAIL!: " + err);
+            global.dcmURL = null;
+            console.log(err);
+        });
 }
 
 app.ws = ws(wsPort);

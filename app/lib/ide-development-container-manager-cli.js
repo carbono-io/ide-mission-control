@@ -22,6 +22,7 @@ exports.list = function () {
  * @return function (err, res)
  */
 exports.create = function (proj, cb) {
+    console.log(global.dcmURL);
     if (global.dcmURL) {
         var url = global.dcmURL + '/container';
         var headers = {
@@ -31,12 +32,12 @@ exports.create = function (proj, cb) {
             apiVersion:'1.0',
             id:'23123-123123123-12312',
             data: {
-                id: '1234', 
-                items: 
+                id: '1234',
+                items:
                 [
                     {
                         projectId: proj
-                        
+
                     }
                 ]
             }};
@@ -54,7 +55,7 @@ exports.create = function (proj, cb) {
             cb(err, body);
         };
         request.post(load, _cb);
-        
+
     } else {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
@@ -62,10 +63,10 @@ exports.create = function (proj, cb) {
                    code: 400,
                    message: 'dcmURL is required for this operation',
                };
-            cjr.setError(err);;
-            _cb(cjr, null, null);
+            cjr.setError(err);
+            cb(cjr, null);
         } catch (e) {
-            _cb(e, null, null);
+            cb(e, null);
         }
     }
 };
