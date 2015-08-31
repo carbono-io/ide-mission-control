@@ -24,7 +24,7 @@ exports.list = function () {
 exports.create = function (proj, cb) {
     console.log(global.dcmURL);
     if (global.dcmURL) {
-        var url = global.dcmURL + '/container';
+        var url = 'http://' + global.dcmURL + '/container';
         var headers = {
         'Content-Type':     'application/json'
         };
