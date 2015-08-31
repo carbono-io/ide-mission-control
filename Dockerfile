@@ -4,5 +4,4 @@ RUN mkdir /src
 WORKDIR /src
 ADD . /src
 RUN npm install
-EXPOSE 8000 3000 3001
-ENTRYPOINT node .
+EXPOSE 7890 7891

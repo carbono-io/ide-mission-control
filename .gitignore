@@ -31,3 +31,6 @@ node_modules
 
 # IDE
 .settings
+
+# Mac
+.DS_STORE
