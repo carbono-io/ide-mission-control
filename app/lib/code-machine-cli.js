@@ -46,12 +46,12 @@ module.exports = function (container) {
     };
 
     this.marked =  function (req, res) {
-        var cmURL = container.markedURL + req.url;
+        var cmURL = 'http:' + container.markedURL + req.url;
         req.pipe(request(cmURL)).pipe(res);
     };
 
     this.clean =  function (req, res) {
-        var cmURL = container.cleanURL + req.url;
+        var cmURL = 'http:' + container.cleanURL + req.url;
         req.pipe(request(cmURL)).pipe(res);
     };
 };

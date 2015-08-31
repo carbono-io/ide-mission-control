@@ -1,5 +1,5 @@
 {
     "htPort" : 3000,
     "wsPort" : 3001,
-    "dcmURL" : "http://127.0.0.1:8000"
+    "dcmURL" : "http://127.0.0.1:8000/ide-development-container-manager"
 }

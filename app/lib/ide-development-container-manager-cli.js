@@ -21,10 +21,27 @@ exports.list = function () {
  */
 exports.create = function (proj, cb) {
     var url = config.get('dcmURL') + '/container';
+    var headers = {
+    'Content-Type':     'application/json'
+}
+    var aux = {
+        apiVersion:'1.0',
+        id:'23123-123123123-12312',
+        data: {
+            id: '1234', 
+            items: 
+            [
+                {
+                    projectId: proj
+                    
+                }
+            ]
+        }};
     var load = {
         url: url,
-        formData: proj,
-    };
+        headers: headers,
+        json: aux
+        };
     var _cb = function (err, httpResponse, body) {
         try {
             body = JSON.parse(body);

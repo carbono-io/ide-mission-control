@@ -13,7 +13,7 @@ exports.createDevContainer = function (project, cb) {
     dcm.create(project, function (err, res) {
         var cm;
         if (!err) {
-            var url = 'http://' + res.host + ':' + res.ports['8000'];
+            var url = res.data.items[0].url;
             var container = {
                 id: res.containerId,
                 markedURL: url + '/resources/marked',
@@ -22,8 +22,8 @@ exports.createDevContainer = function (project, cb) {
             };
             cm = new CM(container);
             res = {
-                markedURL: 'http://127.0.0.1/marked',
-                srcURL: 'http://127.0.0.1/src',
+                markedURL: url + '/resources/marked',
+                srcURL: url + '/resources',
             };
         }
         cb(err, res, cm);
