@@ -22,7 +22,6 @@ exports.list = function () {
  * @return function (err, res)
  */
 exports.create = function (proj, cb) {
-    console.log(global.dcmURL);
     if (global.dcmURL) {
         var url = 'http://' + global.dcmURL + '/container';
         var headers = {

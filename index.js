@@ -37,9 +37,18 @@ consign({cwd: 'app'})
     .include('routes')
     .into(app);
 
-
 var server = app.listen(htPort, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Mission-Control listening at http://%s:%s', host, port);
+
+    var registerPromise = global.serviceManager
+                .registerService('mc', config.get('host') + ':' + port);
+
+    registerPromise
+        .then(function () {
+            console.log('Mission control registered with etcd'.green);
+        }, function (err) {
+            console.log('[ERROR] Registering with etcd: '.red + err);
+        });
 });

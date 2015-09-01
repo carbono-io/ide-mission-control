@@ -13,13 +13,12 @@ var url = require('url');
 exports.createDevContainer = function (project, cb) {
     dcm.create(project, function (err, res) {
         var cm;
-        
         if (!err) {
             // var url = res.data.items[0].url;
             var path = url.format({
                 protocol: 'http',
                 hostname: res.host,
-                port: res.ports[1],
+                port: res.ports['8000'],
             });
 
             var container = {
