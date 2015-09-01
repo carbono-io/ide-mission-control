@@ -1,20 +1,27 @@
 'use strict';
 var CJR = require('carbono-json-response');
+var uuid = require('node-uuid');
 
 /**
  * @todo Get cm from user context
  */
-module.exports = function (app) {
+module.exports = function (app, etcdManager) {
 
     this.root = function (req, res) {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
-            res.status(400);
-            var err = {
-                   code: 400,
-                   message: 'You are doing it wrong! Try http://carbono.io/',
-               };
-            cjr.setError(err);
+            res.status(200);
+            var list = [
+                    {
+                        message: 'You are doing it wrong! Try http://carbono.io/',
+                    }
+                ]
+            cjr.setData(
+                   {
+                       id: uuid.v4(),
+                       items: list,
+                   }
+                );
             res.json(cjr);
             res.end();
         } catch (e) {
@@ -116,11 +123,47 @@ module.exports = function (app) {
     };
 
     this.gui = function (req, res) {
-        res.send('Graphical user interface.');
+        var cjr = new CJR({apiVersion: '1.0'});
+        try {
+            res.status(200);
+            var list = [
+                    {
+                        message: 'Graphical user interface.',
+                    }
+                ]
+            cjr.setData(
+                   {
+                       id: uuid.v4(),
+                       items: list,
+                   }
+                );
+            res.json(cjr);
+            res.end();
+        } catch (e) {
+            res.status(500).end();
+        }
     };
 
     this.cli = function (req, res) {
-        res.send('Command line interface.');
+        var cjr = new CJR({apiVersion: '1.0'});
+        try {
+            res.status(200);
+            var list = [
+                    {
+                        message: 'Command line interface.',
+                    }
+                ]
+            cjr.setData(
+                   {
+                       id: uuid.v4(),
+                       items: list,
+                   }
+                );
+            res.json(cjr);
+            res.end();
+        } catch (e) {
+            res.status(500).end();
+        }
     };
 
     return this;

@@ -7,19 +7,21 @@ var url = require('url');
  * Pedir uma maquina pro dcm e nesse momento criar uma
  * instancia de conexao parametrizada de code-machine
  * @todo treat errors
+ * 
+ * @param {string} dcmURL - URL retrieved from etcd.
  *
  * parameters filesUrl, userID, proj
  */
-exports.createDevContainer = function (project, cb) {
-    dcm.create(project, function (err, res) {
+exports.createDevContainer = function (dcmURL, project, cb) {
+    dcm.create(dcmURL, project, function (err, res) {
         var cm;
         if (!err) {
-            // var url = res.data.items[0].url;
-            var path = url.format({
-                protocol: 'http',
-                hostname: res.host,
-                port: res.ports['8000'],
-            });
+            var path = res.data.items[0].url;
+            // var path = url.format({
+            //     protocol: 'http',
+            //     hostname: res.host,
+            //     port: res.ports['8000'],
+            // });
 
             var container = {
                 id: res.containerId,

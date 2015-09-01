@@ -5,6 +5,8 @@ module.exports = function (app) {
     
     var path = '/project/:projectId/resources';
     
+    app.get('/', resources.root);
+    
     app.get(path + '/marked/[^**/]*', resources.marked);
     
     app.get(path + '/clean/[^**/]*', resources.clean);

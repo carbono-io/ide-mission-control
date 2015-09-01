@@ -18,12 +18,15 @@ exports.list = function () {
 /**
  * Creates and/or retrieves an docker instance and
  * returns a callback function.
+ * 
+ * @param {string} dcmURL - URL retrieved from etcd.
+ * 
  * @todo Parse errors and throw them.
  * @return function (err, res)
  */
-exports.create = function (proj, cb) {
-    if (global.dcmURL) {
-        var url = 'http://' + global.dcmURL + '/container';
+exports.create = function (dcmURL, proj, cb) {
+    if (dcmURL) {
+        var url = dcmURL + '/container';
         var headers = {
         'Content-Type':     'application/json'
         };
