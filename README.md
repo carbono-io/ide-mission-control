@@ -1,8 +1,10 @@
 # IDE Mission control module
+
 Description
 ===========
-Serves as an orchestrator and gateway between the app many user interfaces and the development container.
-See Archtecture Specs for more details on MissionControl.
+Serves as an orchestrator and gateway between the app many user 
+interfaces and the development container. See Archtecture Specs for more
+details on MissionControl.
 
 Installation and Running
 ============
@@ -18,20 +20,20 @@ Interfaces
 ==========
 
 ## File
-* create()
-* delete()
-* list()
-* apNode()
-* rmNode()
-* edNodeAtt()
+* create
+* list
+* delete
+* apNode
+* rmNode
+* edNodeAtt
 
 ## Project
-* list()
-* create()
-* fetch()
+* create
+* retrieve
+* list
 
 ## PaaS
-* deploy()
+* deploy
 
 Access Points
 =============
