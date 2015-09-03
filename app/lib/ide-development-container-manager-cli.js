@@ -1,10 +1,13 @@
 'use strict';
-var config  = require('config');
 var request = require('request');
 var CJR = require('carbono-json-response');
 
 /**
- * List project Ids created. MOCK
+ * Lista project Ids created. MOCK
+ * 
+ * @todo Needs real implementation
+ * @return {object} object containing a list (containers) of objects 
+ * (name and uuid)
  */
 exports.list = function () {
     return {
@@ -19,9 +22,14 @@ exports.list = function () {
  * Creates and/or retrieves an docker instance and
  * returns a callback function.
  * 
- * @param {string} dcmURL - URL retrieved from etcd.
- * 
  * @todo Parse errors and throw them.
+ * @todo Use carbono-json-messages
+ * 
+ * @param {String} dcmURL - URL retrieved from etcd.
+ * @param {String} proj - Id of the project
+ * @param {create-callback} cb - Callback function that receives errors and/or
+ * other information
+ * 
  * @return function (err, res)
  */
 exports.create = function (dcmURL, proj, cb) {
@@ -48,6 +56,14 @@ exports.create = function (dcmURL, proj, cb) {
             headers: headers,
             json: aux
             };
+        
+        /**
+         * Callback function that tries to parse (JSON) the body object
+         * 
+         * @param {object} err - Error object
+         * @param {object} httpResponse - Response object
+         * @param {String} body - String containing a JSON structure
+         */
         var _cb = function (err, httpResponse, body) {
             try {
                 body = JSON.parse(body);
@@ -59,6 +75,7 @@ exports.create = function (dcmURL, proj, cb) {
         request.post(load, _cb);
 
     } else {
+        // If there is no DCM reference, nothing can be done. Error
         var cjr = new CJR({apiVersion: '1.0'});
         try {
             var err = {

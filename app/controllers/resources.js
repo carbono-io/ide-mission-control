@@ -6,7 +6,13 @@ var uuid = require('node-uuid');
  * @todo Get cm from user context
  */
 module.exports = function (app, etcdManager) {
-
+    
+    /**
+     * Root function for Mission Control. Will be called on '/'
+     * @param {object} - req Request object
+     * @param {object} - res Response object (will carry a success or error 
+     * carbono-json-message)
+     */
     this.root = function (req, res) {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
@@ -15,7 +21,7 @@ module.exports = function (app, etcdManager) {
                     {
                         message: 'You are doing it wrong! Try http://carbono.io/',
                     }
-                ]
+                ];
             cjr.setData(
                    {
                        id: uuid.v4(),
@@ -28,7 +34,17 @@ module.exports = function (app, etcdManager) {
             res.status(500).end();
         }
     };
-
+    
+    /**
+     * Handles a request for a Clean file (of any type) and asks Code Machine
+     * for the specified file
+     * @param {object} req - Request object
+     * @param {String} req.params.projectId - The id of the current project
+     * @param {String} req.params.fileName - The name (with path) of the required
+     * clean file
+     * @param {object} res - Response object (will carry a file or error 
+     * carbono-json-message)
+     */
     this.clean = function (req, res) {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
@@ -42,7 +58,7 @@ module.exports = function (app, etcdManager) {
                         domain: 'Code Machine',
                         reason: 'Code Machine not instantiated',
                         message: 'The code machine was not created or was not retrieved to execute this operation'
-                    }
+                    };
                     errors.push(error);
                 }
                 if (!req.params.fileName) {
@@ -51,7 +67,7 @@ module.exports = function (app, etcdManager) {
                         domain: 'fileName',
                         reason: 'fileName cannot be null',
                         message: 'You must specify a valid fileName'
-                    }
+                    };
                     errors.push(error);
                 }
                 
@@ -67,15 +83,25 @@ module.exports = function (app, etcdManager) {
                 var fileNameArr = req.path;
                 var clean = '/clean';
                 req.url = fileNameArr.substr(fileNameArr.indexOf(clean) + clean.length);
+                // Calls Code Machine for the file
                 app.cm.clean(req, res);
             }
-            
         } catch (e) {
             res.status(500).end();
         }
         
     };
 
+    /**
+     * Handles a request for a Marked file (of any type) and asks Code Machine
+     * for the specified file
+     * @param {object} req - Request object
+     * @param {String} req.params.projectId - The id of the current project
+     * @param {String} req.params.fileName - The name (with path) of the required
+     * clean file
+     * @param {object} res - Response object (will carry a file or error 
+     * carbono-json-message)
+     */
     this.marked = function (req, res) {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
@@ -89,7 +115,7 @@ module.exports = function (app, etcdManager) {
                         domain: 'Code Machine',
                         reason: 'Code Machine not instantiated',
                         message: 'The code machine was not created or was not retrieved to execute this operation'
-                    }
+                    };
                     errors.push(error);
                 }
                 if (!req.params.fileName) {
@@ -98,7 +124,7 @@ module.exports = function (app, etcdManager) {
                         domain: 'fileName',
                         reason: 'fileName cannot be null',
                         message: 'You must specify a valid fileName'
-                    }
+                    };
                     errors.push(error);
                 }
                 
@@ -114,14 +140,20 @@ module.exports = function (app, etcdManager) {
                 var fileNameArr = req.path;
                 var marked = '/marked';
                 req.url = fileNameArr.substr(fileNameArr.indexOf(marked) + marked.length);
+                // Calls Code Machine for the file
                 app.cm.marked(req, res);
             }
-            
         } catch (e) {
             res.status(500).end();
         }
     };
-
+    
+    /**
+     * Future Granphical User Interface (GUI)
+     * @param {object} req - Request object
+     * @param {object} res - Response object (will carry a success or error 
+     * carbono-json-message)
+     */
     this.gui = function (req, res) {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
@@ -130,7 +162,7 @@ module.exports = function (app, etcdManager) {
                     {
                         message: 'Graphical user interface.',
                     }
-                ]
+                ];
             cjr.setData(
                    {
                        id: uuid.v4(),
@@ -144,6 +176,12 @@ module.exports = function (app, etcdManager) {
         }
     };
 
+    /**
+     * Future Comand Line Interface (CLI)
+     * @param {object} req - Request object
+     * @param {object} res - Response object (will carry a success or error 
+     * carbono-json-message)
+     */
     this.cli = function (req, res) {
         var cjr = new CJR({apiVersion: '1.0'});
         try {
@@ -152,7 +190,7 @@ module.exports = function (app, etcdManager) {
                     {
                         message: 'Command line interface.',
                     }
-                ]
+                ];
             cjr.setData(
                    {
                        id: uuid.v4(),

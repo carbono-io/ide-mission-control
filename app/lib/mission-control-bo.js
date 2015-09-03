@@ -16,6 +16,7 @@ exports.createDevContainer = function (dcmURL, project, cb) {
     dcm.create(dcmURL, project, function (err, res) {
         var cm;
         if (!err) {
+            // todo Synchronize wit DCM
             var path = res.data.items[0].url;
             // var path = url.format({
             //     protocol: 'http',
@@ -29,6 +30,7 @@ exports.createDevContainer = function (dcmURL, project, cb) {
                 cleanURL: path + '/resources/clean',
                 wsURL: path,
             };
+            // Instantiate CM object
             cm = new CM(container);
             res = {
                 markedURL: path + '/resources/marked',
