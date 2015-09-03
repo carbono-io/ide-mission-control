@@ -1,5 +1,4 @@
-'use strict'
-
+'use strict';
 var config          = require('config');
 var ServiceManager  = require('carbono-service-manager');
 require('colors');
@@ -17,10 +16,9 @@ var registered      = false;
  *
  * @class EtcdManager
  */
-var EtcdManager = function() {
+var EtcdManager = function () {
     return this;
-}
-
+};
 
 /**
  * Initialize the communication with etcd. An environment variable named
@@ -28,7 +26,7 @@ var EtcdManager = function() {
  *
  * @function
  */
-EtcdManager.prototype.init = function() {
+EtcdManager.prototype.init = function () {
     if (typeof process.env.ETCD_SERVER === 'undefined') {
         console.log('The environment variable ETCD_SERVER is not defined!'
             .bold.red);
@@ -37,7 +35,7 @@ EtcdManager.prototype.init = function() {
         console.log('integration will not work!'.red);
         console.log();
     } else {
-        this.serviceManager = new ServiceManager(process.env.ETCD_SERVER);
+        serviceManager = new ServiceManager(process.env.ETCD_SERVER);
 
         this.findDCM();
         this.register();
@@ -50,20 +48,20 @@ EtcdManager.prototype.init = function() {
  *
  * @function
  */
-EtcdManager.prototype.register = function() {
-    if (this.serviceManager) {
-        var promise = this.serviceManager.registerService(
+EtcdManager.prototype.register = function () {
+    if (serviceManager) {
+        var promise = serviceManager.registerService(
             MC_SERVICE_KEY,
             config.get('host') + ':' + config.get('htPort')
         );
 
         promise.then(
-            function() {
+            function () {
                 console.log('Mission control registered with etcd'.green);
                 registered = true;
             }, function (err) {
-                console.log('[ERROR] Registering with etcd: '.red
-                    + JSON.stringify(err));
+                console.log('[ERROR] Registering with etcd: '.red +
+                    JSON.stringify(err));
                 registered = false;
             });
     }
@@ -75,9 +73,9 @@ EtcdManager.prototype.register = function() {
  *
  * @function
  */
-EtcdManager.prototype.findDCM = function() {
-    if (this.serviceManager) {
-        var promise = this.serviceManager.findService(DCM_SERVICE_KEY);
+EtcdManager.prototype.findDCM = function () {
+    if (serviceManager) {
+        var promise = serviceManager.findService(DCM_SERVICE_KEY);
 
         promise.then(
             function (url) {
@@ -85,8 +83,8 @@ EtcdManager.prototype.findDCM = function() {
                     .green);
                 dcmURL = url;
             }, function (err) {
-                console.log('[ERROR] Finding DCM with etcd: '.red
-                    + JSON.stringify(err));
+                console.log('[ERROR] Finding DCM with etcd: '.red +
+                    JSON.stringify(err));
                 dcmURL = null;
             });
     }
@@ -96,9 +94,9 @@ EtcdManager.prototype.findDCM = function() {
  * Try to get DCM url retrieved by etcd.
  *
  * @function
- * @return {String} dcmURL A url to access the DCM
+ * @return {string} dcmURL A url to access the DCM
  */
-EtcdManager.prototype.getDcmUrl = function() {
+EtcdManager.prototype.getDcmUrl = function () {
     return dcmURL;
 };
 

@@ -9,9 +9,9 @@ module.exports = function (app, etcdManager) {
     /**
      * Retrieves the machine of the project
      * @todo Needs implementation
-     * @param {object} req - Request object
-     * @param {String} req.params.projectId - The id of the required project
-     * @param {object} res - Response object (will carry a success or error 
+     * @param {Object} req - Request object
+     * @param {string} req.params.projectId - The id of the required project
+     * @param {Object} res - Response object (will carry a success or error
      * carbono-json-message)
      */
     this.retrieve = function (req, res) {
@@ -31,7 +31,7 @@ module.exports = function (app, etcdManager) {
                        items: [
                             {
                                 projectId: req.params.projectId,
-                            }
+                            },
                            ],
                    }
                 );
@@ -46,8 +46,8 @@ module.exports = function (app, etcdManager) {
     /**
      * Lists all projects associated with one user.
      * @todo Implement User Context
-     * @param {object} req - Request object
-     * @param {object} res - Response object (will carry a success or error 
+     * @param {Object} req - Request object
+     * @param {Object} res - Response object (will carry a success or error
      * carbono-json-message)
      */
     this.list = function (req, res) {
@@ -78,11 +78,11 @@ module.exports = function (app, etcdManager) {
 
     /**
      * Handles request for the creation of a project. This will communicate
-     * with DCM to create a new project and get the reference of the Code Machine
+     * with DCM to create a new project and get the reference of the CM
      * @todo Put cm in a user context
      * @todo Discover correct projectId
-     * @param {object} req - Request object
-     * @param {object} res - Response object (will carry a success or error 
+     * @param {Object} req - Request object
+     * @param {Object} res - Response object (will carry a success or error
      * carbono-json-message)
      */
     this.create = function (req, res) {
@@ -90,14 +90,14 @@ module.exports = function (app, etcdManager) {
         var projectId = 'u18923uhe12u90uy781gdu';
         // Discovers with etcdManager the DCM URL
         var dcmURL = etcdManager.getDcmUrl();
-        
-        bo.createDevContainer(dcmURL, projectId, 
+
+        bo.createDevContainer(dcmURL, projectId,
             /**
              * Callback function for the creation of a project on DCM
-             * @param {object} err - Error object containing any errors
-             * @param {object} ret - Return values from the method
-             * @param {String} ret.markedURL - Path for Marked files
-             * @param {String} ret.srcURL - Path for Clean files
+             * @param {Object} err - Error object containing any errors
+             * @param {Object} ret - Return values from the method
+             * @param {string} ret.markedURL - Path for Marked files
+             * @param {string} ret.srcURL - Path for Clean files
              * @param {Object} cm - Code Machine reference
              */
             function (err, ret, cm) {
@@ -128,7 +128,6 @@ module.exports = function (app, etcdManager) {
             }
         );
     };
-    
 
     return this;
 };

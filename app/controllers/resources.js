@@ -5,12 +5,11 @@ var uuid = require('node-uuid');
 /**
  * @todo Get cm from user context
  */
-module.exports = function (app, etcdManager) {
-    
+module.exports = function (app) {
     /**
      * Root function for Mission Control. Will be called on '/'
-     * @param {object} - req Request object
-     * @param {object} - res Response object (will carry a success or error 
+     * @param {Object} - req Request object
+     * @param {Object} - res Response object (will carry a success or error
      * carbono-json-message)
      */
     this.root = function (req, res) {
@@ -19,8 +18,9 @@ module.exports = function (app, etcdManager) {
             res.status(200);
             var list = [
                     {
-                        message: 'You are doing it wrong! Try http://carbono.io/',
-                    }
+                        message: 'You are doing it wrong!' +
+                        ' Try http://carbono.io/',
+                    },
                 ];
             cjr.setData(
                    {
@@ -34,15 +34,14 @@ module.exports = function (app, etcdManager) {
             res.status(500).end();
         }
     };
-    
     /**
      * Handles a request for a Clean file (of any type) and asks Code Machine
      * for the specified file
-     * @param {object} req - Request object
-     * @param {String} req.params.projectId - The id of the current project
-     * @param {String} req.params.fileName - The name (with path) of the required
-     * clean file
-     * @param {object} res - Response object (will carry a file or error 
+     * @param {Object} req - Request object
+     * @param {string} req.params.projectId - The id of the current project
+     * @param {string} req.params.fileName - The name (with path) of the
+     * required clean file
+     * @param {Object} res - Response object (will carry a file or error
      * carbono-json-message)
      */
     this.clean = function (req, res) {
@@ -57,7 +56,8 @@ module.exports = function (app, etcdManager) {
                     error = {
                         domain: 'Code Machine',
                         reason: 'Code Machine not instantiated',
-                        message: 'The code machine was not created or was not retrieved to execute this operation'
+                        message: 'The code machine was not created or was' +
+                        ' not retrieved to execute this operation',
                     };
                     errors.push(error);
                 }
@@ -66,15 +66,15 @@ module.exports = function (app, etcdManager) {
                     error = {
                         domain: 'fileName',
                         reason: 'fileName cannot be null',
-                        message: 'You must specify a valid fileName'
+                        message: 'You must specify a valid fileName',
                     };
                     errors.push(error);
                 }
-                
+
                 var err = {
                        code: code,
                        message: 'An error occured in your request',
-                       errors: errors
+                       errors: errors,
                    };
                 cjr.setError(err);
                 res.json(cjr);
@@ -82,24 +82,24 @@ module.exports = function (app, etcdManager) {
             } else {
                 var fileNameArr = req.path;
                 var clean = '/clean';
-                req.url = fileNameArr.substr(fileNameArr.indexOf(clean) + clean.length);
+                req.url = fileNameArr.substr(fileNameArr.indexOf(clean) +
+                clean.length);
                 // Calls Code Machine for the file
                 app.cm.clean(req, res);
             }
         } catch (e) {
             res.status(500).end();
         }
-        
     };
 
     /**
      * Handles a request for a Marked file (of any type) and asks Code Machine
      * for the specified file
-     * @param {object} req - Request object
-     * @param {String} req.params.projectId - The id of the current project
-     * @param {String} req.params.fileName - The name (with path) of the required
+     * @param {Object} req - Request object
+     * @param {string} req.params.projectId - The id of the current project
+     * @param {string} req.params.fileName - The name (with path) of the
      * clean file
-     * @param {object} res - Response object (will carry a file or error 
+     * @param {Object} res - Response object (will carry a file or error
      * carbono-json-message)
      */
     this.marked = function (req, res) {
@@ -114,7 +114,8 @@ module.exports = function (app, etcdManager) {
                     error = {
                         domain: 'Code Machine',
                         reason: 'Code Machine not instantiated',
-                        message: 'The code machine was not created or was not retrieved to execute this operation'
+                        message: 'The code machine was not created or was' +
+                        ' not retrieved to execute this operation',
                     };
                     errors.push(error);
                 }
@@ -123,15 +124,14 @@ module.exports = function (app, etcdManager) {
                     error = {
                         domain: 'fileName',
                         reason: 'fileName cannot be null',
-                        message: 'You must specify a valid fileName'
+                        message: 'You must specify a valid fileName',
                     };
                     errors.push(error);
                 }
-                
                 var err = {
                        code: code,
                        message: 'An error occured in your request',
-                       errors: errors
+                       errors: errors,
                    };
                 cjr.setError(err);
                 res.json(cjr);
@@ -139,7 +139,8 @@ module.exports = function (app, etcdManager) {
             } else {
                 var fileNameArr = req.path;
                 var marked = '/marked';
-                req.url = fileNameArr.substr(fileNameArr.indexOf(marked) + marked.length);
+                req.url = fileNameArr.substr(fileNameArr.indexOf(marked) +
+                marked.length);
                 // Calls Code Machine for the file
                 app.cm.marked(req, res);
             }
@@ -147,11 +148,10 @@ module.exports = function (app, etcdManager) {
             res.status(500).end();
         }
     };
-    
     /**
      * Future Granphical User Interface (GUI)
-     * @param {object} req - Request object
-     * @param {object} res - Response object (will carry a success or error 
+     * @param {Object} req - Request object
+     * @param {Object} res - Response object (will carry a success or error
      * carbono-json-message)
      */
     this.gui = function (req, res) {
@@ -161,7 +161,7 @@ module.exports = function (app, etcdManager) {
             var list = [
                     {
                         message: 'Graphical user interface.',
-                    }
+                    },
                 ];
             cjr.setData(
                    {
@@ -178,8 +178,8 @@ module.exports = function (app, etcdManager) {
 
     /**
      * Future Comand Line Interface (CLI)
-     * @param {object} req - Request object
-     * @param {object} res - Response object (will carry a success or error 
+     * @param {Object} req - Request object
+     * @param {Object} res - Response object (will carry a success or error
      * carbono-json-message)
      */
     this.cli = function (req, res) {
@@ -189,7 +189,7 @@ module.exports = function (app, etcdManager) {
             var list = [
                     {
                         message: 'Command line interface.',
-                    }
+                    },
                 ];
             cjr.setData(
                    {

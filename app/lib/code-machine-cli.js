@@ -3,11 +3,11 @@ var request = require('request');
 
 /**
  * This class represents the Code Machine in the interactions
- * 
+ *
  * @class CM
- * @param {object} req - Request object
- * @param {String} req.url - Path for the file
- * @param {object} res - Response containing the requested file
+ * @param {Object} req - Request object
+ * @param {string} req.url - Path for the file
+ * @param {Object} res - Response containing the requested file
  */
 var CM = function (container) {
     this.container = container;
@@ -19,17 +19,14 @@ var CM = function (container) {
     if (!this.container.cleanURL) {
         throw 'Container must contain clean url.';
     }
-    
     return this;
 };
 
-
-
 /**
  * Creates reference for CM
- * 
+ *
  * @todo Implement...
- * @return {object} obj.uuid Containing the Id of the CM
+ * @return {Object} obj.uuid Containing the Id of the CM
  */
 CM.prototype.create = function () {
     return {
@@ -39,9 +36,9 @@ CM.prototype.create = function () {
 
 /**
  * Lists reference
- * 
+ *
  * @todo Implement...
- * @return {list} views Containing a list of references
+ * @return {Array} views Containing a list of references
  */
 CM.prototype.list = function () {
     return {
@@ -54,9 +51,9 @@ CM.prototype.list = function () {
 
 /**
  * Deletes reference
- * 
+ *
  * @todo Implement...
- * @return {object} obj
+ * @return {Object} obj
  */
 CM.prototype.del = function () {
     return {
@@ -66,9 +63,9 @@ CM.prototype.del = function () {
 
 /**
  * Appends a Node
- * 
+ *
  * @todo Implement...
- * @return {object} obj
+ * @return {Object} obj
  */
 CM.prototype.apNode = function () {
     return {
@@ -78,9 +75,9 @@ CM.prototype.apNode = function () {
 
 /**
  * Removes a Node
- * 
+ *
  * @todo Implement...
- * @return {object} obj
+ * @return {Object} obj
  */
 CM.prototype.rmNode = function () {
     return {
@@ -90,9 +87,9 @@ CM.prototype.rmNode = function () {
 
 /**
  * Edits a Node
- * 
+ *
  * @todo Implement...
- * @return {object} obj
+ * @return {Object} obj
  */
 CM.prototype.edNodeAtt = function () {
     return {
@@ -102,10 +99,10 @@ CM.prototype.edNodeAtt = function () {
 
 /**
  * Handles request for a Marked file
- * 
- * @param {object} req - Request object
- * @param {String} req.url - Path for the file
- * @param {object} res - Response containing the requested file
+ *
+ * @param {Object} req - Request object
+ * @param {string} req.url - Path for the file
+ * @param {Object} res - Response containing the requested file
  */
 CM.prototype.marked =  function (req, res) {
     var cmURL = this.container.markedURL + req.url;
@@ -114,10 +111,10 @@ CM.prototype.marked =  function (req, res) {
 
 /**
  * Handles request for a Clean file
- * 
- * @param {object} req - Request object
- * @param {String} req.url - Path for the file
- * @param {object} res - Response containing the requested file
+ *
+ * @param {Object} req - Request object
+ * @param {string} req.url - Path for the file
+ * @param {Object} res - Response containing the requested file
  */
 CM.prototype.clean =  function (req, res) {
     var cmURL = this.container.cleanURL + req.url;
