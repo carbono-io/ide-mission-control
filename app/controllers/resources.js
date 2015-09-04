@@ -34,6 +34,7 @@ module.exports = function (app) {
             res.status(500).end();
         }
     };
+
     /**
      * Handles a request for a Clean file (of any type) and asks Code Machine
      * for the specified file
@@ -49,34 +50,7 @@ module.exports = function (app) {
         try {
             if (!app.cm || !req.path) {
                 res.status(400);
-                var errors = [];
-                var error;
-                var code = 400;
-                if (!app.cm) {
-                    error = {
-                        domain: 'Code Machine',
-                        reason: 'Code Machine not instantiated',
-                        message: 'The code machine was not created or was' +
-                        ' not retrieved to execute this operation',
-                    };
-                    errors.push(error);
-                }
-                if (!req.params.fileName) {
-                    code = 404;
-                    error = {
-                        domain: 'fileName',
-                        reason: 'fileName cannot be null',
-                        message: 'You must specify a valid fileName',
-                    };
-                    errors.push(error);
-                }
-
-                var err = {
-                       code: code,
-                       message: 'An error occured in your request',
-                       errors: errors,
-                   };
-                cjm.setError(err);
+                cjm.setError(buildErrors(app, req));
                 res.json(cjm);
                 res.end();
             } else {
@@ -107,33 +81,7 @@ module.exports = function (app) {
         try {
             if (!app.cm || !req.path) {
                 res.status(400);
-                var errors = [];
-                var error;
-                var code = 400;
-                if (!app.cm) {
-                    error = {
-                        domain: 'Code Machine',
-                        reason: 'Code Machine not instantiated',
-                        message: 'The code machine was not created or was' +
-                        ' not retrieved to execute this operation',
-                    };
-                    errors.push(error);
-                }
-                if (!req.params.fileName) {
-                    code = 404;
-                    error = {
-                        domain: 'fileName',
-                        reason: 'fileName cannot be null',
-                        message: 'You must specify a valid fileName',
-                    };
-                    errors.push(error);
-                }
-                var err = {
-                       code: code,
-                       message: 'An error occured in your request',
-                       errors: errors,
-                   };
-                cjm.setError(err);
+                cjm.setError(buildErrors(app, req));
                 res.json(cjm);
                 res.end();
             } else {
@@ -202,6 +150,46 @@ module.exports = function (app) {
         } catch (e) {
             res.status(500).end();
         }
+    };
+
+    /**
+     * This functions builds the errors that should be sent with the response
+     *
+     * @function
+     * @param {Object} app - app object
+     * @param {Object} app.cm - CodeMachine reference
+     * @param {Object} req - Request Object
+     * @param {string} req.params.fileName - Name/path of the file
+     */
+    var buildErrors = function (app, req) {
+        var errors = [];
+        var error;
+        var code = 400;
+        if (!app.cm) {
+            error = {
+                domain: 'Code Machine',
+                reason: 'Code Machine not instantiated',
+                message: 'The code machine was not created or was' +
+                ' not retrieved to execute this operation',
+            };
+            errors.push(error);
+        }
+        if (!req.params.fileName) {
+            code = 404;
+            error = {
+                domain: 'fileName',
+                reason: 'fileName cannot be null',
+                message: 'You must specify a valid fileName',
+            };
+            errors.push(error);
+        }
+
+        var err = {
+               code: code,
+               message: 'An error occured in your request',
+               errors: errors,
+           };
+        return err;
     };
 
     return this;

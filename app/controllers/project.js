@@ -54,7 +54,7 @@ module.exports = function (app, etcdManager) {
         var list = dcm.list();
         var cjm = new CJM({apiVersion: '1.0'});
         try {
-            if (!req.body || list === undefined) {
+            if (list === undefined) {
                 res.status(400);
                 var err = {
                        code: 400,
@@ -65,7 +65,7 @@ module.exports = function (app, etcdManager) {
                 cjm.setData(
                    {
                        id: uuid.v4(),
-                       items: list,
+                       items: [list],
                    }
                 );
             }
@@ -116,7 +116,7 @@ module.exports = function (app, etcdManager) {
                         cjm.setData(
                            {
                                id: uuid.v4(),
-                               items: ret,
+                               items: [ret],
                            }
                         );
                     }

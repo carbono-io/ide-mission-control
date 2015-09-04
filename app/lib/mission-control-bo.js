@@ -1,7 +1,6 @@
 'use strict';
 var CM = require('./code-machine-cli');
 var dcm = require('./ide-development-container-manager-cli');
-var url = require('url');
 
 /**
  * Pedir uma maquina pro dcm e nesse momento criar uma
