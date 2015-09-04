@@ -24,3 +24,5 @@ var server = app.listen(htPort, function () {
     console.log('Mission-Control listening at http://%s:%s', host, port);
     etcdManager.init();
 });
+
+module.exports = server;
