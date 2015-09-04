@@ -15,6 +15,7 @@ Tests and Dev
 =============
 ```gulp nodemon```
 ```gulp test```
+*Hint:* To run tests, you must have a etcd server running and also the mocks project
 
 Interfaces
 ==========
