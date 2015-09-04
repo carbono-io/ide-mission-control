@@ -1,7 +1,7 @@
 'use strict';
 var dcm = require('../lib/ide-development-container-manager-cli');
 var bo  = require('../lib/mission-control-bo');
-var CJR = require('carbono-json-response');
+var CJM = require('carbono-json-messages');
 var uuid = require('node-uuid');
 
 module.exports = function (app, etcdManager) {
@@ -15,7 +15,7 @@ module.exports = function (app, etcdManager) {
      * carbono-json-message)
      */
     this.retrieve = function (req, res) {
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             if (!req.params.projectId) {
                 res.status(400);
@@ -23,9 +23,9 @@ module.exports = function (app, etcdManager) {
                        code: 400,
                        message: 'projectId cannot be null',
                    };
-                cjr.setError(err);
+                cjm.setError(err);
             } else {
-                cjr.setData(
+                cjm.setData(
                    {
                        id: uuid.v4(),
                        items: [
@@ -36,7 +36,7 @@ module.exports = function (app, etcdManager) {
                    }
                 );
             }
-            res.json(cjr);
+            res.json(cjm);
             res.end();
         } catch (e) {
             res.status(500).end();
@@ -52,7 +52,7 @@ module.exports = function (app, etcdManager) {
      */
     this.list = function (req, res) {
         var list = dcm.list();
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             if (!req.body || list === undefined) {
                 res.status(400);
@@ -60,16 +60,16 @@ module.exports = function (app, etcdManager) {
                        code: 400,
                        message: 'Could not list projects',
                    };
-                cjr.setError(err);
+                cjm.setError(err);
             } else {
-                cjr.setData(
+                cjm.setData(
                    {
                        id: uuid.v4(),
                        items: list,
                    }
                 );
             }
-            res.json(cjr);
+            res.json(cjm);
             res.end();
         } catch (e) {
             res.status(500).end();
@@ -101,7 +101,7 @@ module.exports = function (app, etcdManager) {
              * @param {Object} cm - Code Machine reference
              */
             function (err, ret, cm) {
-                var cjr = new CJR({apiVersion: '1.0'});
+                var cjm = new CJM({apiVersion: '1.0'});
                 try {
                     if (err) {
                         res.status(400);
@@ -110,17 +110,17 @@ module.exports = function (app, etcdManager) {
                                message: 'Could not create project',
                                errors: err,
                            };
-                        cjr.setError(error);
+                        cjm.setError(error);
                     } else {
                         app.cm = cm;
-                        cjr.setData(
+                        cjm.setData(
                            {
                                id: uuid.v4(),
                                items: ret,
                            }
                         );
                     }
-                    res.json(cjr);
+                    res.json(cjm);
                     res.end();
                 } catch (e) {
                     res.status(500).end();

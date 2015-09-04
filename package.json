@@ -13,7 +13,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "carbono-json-response": "git+ssh://git@bitbucket.org:carbonoio/carbono-json-response.git",
+    "carbono-json-messages": "0.0.1",
+    "carbono-service-manager": "^0.0.3",
+    "colors": "^1.1.2",
     "config": "^1.15.0",
     "consign": "^0.1.1",
     "express": "4.13.3",
@@ -21,9 +23,7 @@
     "node-uuid": "^1.4.3",
     "q": "^1.4.1",
     "request": "^2.60.0",
-    "socket.io": "^1.3.6",
-    "carbono-service-manager": "^0.0.3",
-    "colors": "^1.1.2"
+    "socket.io": "^1.3.6"
   },
   "devDependencies": {
     "chai": "3.2.0",

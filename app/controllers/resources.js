@@ -1,5 +1,5 @@
 'use strict';
-var CJR = require('carbono-json-response');
+var CJM = require('carbono-json-messages');
 var uuid = require('node-uuid');
 
 /**
@@ -13,7 +13,7 @@ module.exports = function (app) {
      * carbono-json-message)
      */
     this.root = function (req, res) {
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             res.status(200);
             var list = [
@@ -22,13 +22,13 @@ module.exports = function (app) {
                         ' Try http://carbono.io/',
                     },
                 ];
-            cjr.setData(
+            cjm.setData(
                    {
                        id: uuid.v4(),
                        items: list,
                    }
                 );
-            res.json(cjr);
+            res.json(cjm);
             res.end();
         } catch (e) {
             res.status(500).end();
@@ -45,7 +45,7 @@ module.exports = function (app) {
      * carbono-json-message)
      */
     this.clean = function (req, res) {
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             if (!app.cm || !req.path) {
                 res.status(400);
@@ -76,8 +76,8 @@ module.exports = function (app) {
                        message: 'An error occured in your request',
                        errors: errors,
                    };
-                cjr.setError(err);
-                res.json(cjr);
+                cjm.setError(err);
+                res.json(cjm);
                 res.end();
             } else {
                 var fileNameArr = req.path;
@@ -103,7 +103,7 @@ module.exports = function (app) {
      * carbono-json-message)
      */
     this.marked = function (req, res) {
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             if (!app.cm || !req.path) {
                 res.status(400);
@@ -133,8 +133,8 @@ module.exports = function (app) {
                        message: 'An error occured in your request',
                        errors: errors,
                    };
-                cjr.setError(err);
-                res.json(cjr);
+                cjm.setError(err);
+                res.json(cjm);
                 res.end();
             } else {
                 var fileNameArr = req.path;
@@ -155,7 +155,7 @@ module.exports = function (app) {
      * carbono-json-message)
      */
     this.gui = function (req, res) {
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             res.status(200);
             var list = [
@@ -163,13 +163,13 @@ module.exports = function (app) {
                         message: 'Graphical user interface.',
                     },
                 ];
-            cjr.setData(
+            cjm.setData(
                    {
                        id: uuid.v4(),
                        items: list,
                    }
                 );
-            res.json(cjr);
+            res.json(cjm);
             res.end();
         } catch (e) {
             res.status(500).end();
@@ -183,7 +183,7 @@ module.exports = function (app) {
      * carbono-json-message)
      */
     this.cli = function (req, res) {
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             res.status(200);
             var list = [
@@ -191,13 +191,13 @@ module.exports = function (app) {
                         message: 'Command line interface.',
                     },
                 ];
-            cjr.setData(
+            cjm.setData(
                    {
                        id: uuid.v4(),
                        items: list,
                    }
                 );
-            res.json(cjr);
+            res.json(cjm);
             res.end();
         } catch (e) {
             res.status(500).end();

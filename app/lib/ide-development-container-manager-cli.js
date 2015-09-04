@@ -1,6 +1,6 @@
 'use strict';
 var request = require('request');
-var CJR = require('carbono-json-response');
+var CJM = require('carbono-json-messages');
 
 /**
  * Lista project Ids created. MOCK
@@ -76,14 +76,14 @@ exports.create = function (dcmURL, proj, cb) {
 
     } else {
         // If there is no DCM reference, nothing can be done. Error
-        var cjr = new CJR({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: '1.0'});
         try {
             var err = {
                    code: 400,
                    message: 'dcmURL is required for this operation',
                };
-            cjr.setError(err);
-            cb(cjr, null);
+            cjm.setError(err);
+            cb(cjm, null);
         } catch (e) {
             cb(e, null);
         }
