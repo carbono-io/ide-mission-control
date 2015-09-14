@@ -5,8 +5,10 @@ require('colors');
 
 var MC_SERVICE_KEY  = 'mc';
 var DCM_SERVICE_KEY = 'dcm';
+var IPE_SERVICE_KEY = 'ipe';
 
 var dcmURL          = null;
+var ipeURL          = null;
 var serviceManager  = null;
 var registered      = false;
 
@@ -38,6 +40,7 @@ EtcdManager.prototype.init = function () {
         serviceManager = new ServiceManager(process.env.ETCD_SERVER);
 
         this.findDCM();
+        this.findIPE();
         this.register();
     }
 };
@@ -67,6 +70,35 @@ EtcdManager.prototype.register = function () {
     }
 };
 
+
+/**
+ * (Internal) Helper function to find specifics services in Etcd Manager
+ * 
+ * @param serviceKey  The Key to be found in the Etdc Manager
+ * @param serviceName Friendly name to the service, only useful for logging
+ * @param _cb         Callback function which will receive the service URL
+ */
+function serviceFinder (serviceKey, serviceName, _cb) {
+    serviceName = serviceName || serviceKey;
+    if (serviceManager) {
+        var promise = serviceManager.findService(serviceKey);
+
+        promise.then(
+            function (url) {
+                var msg = serviceName + 'found at etcd'
+                console.log(msg.green);
+                _cb(url);
+            }, function (err) {
+                var msg = '[ERROR] Finding ' + serviceName + ' with etcd: ';
+                console.log(msg.red + JSON.stringify(err));
+                _cb(null);
+            });
+    } else {
+        _cb(null);
+    }
+};
+
+
 /**
  * Try to find Development Container Manager ('dcm') service. It saves the
  * URL at this.dcmURL.
@@ -74,21 +106,19 @@ EtcdManager.prototype.register = function () {
  * @function
  */
 EtcdManager.prototype.findDCM = function () {
-    if (serviceManager) {
-        var promise = serviceManager.findService(DCM_SERVICE_KEY);
+    serviceFinder(DCM_SERVICE_KEY, 'Development Container Manager', function(url){
+        dcmURL = url;
+    });
+}
 
-        promise.then(
-            function (url) {
-                console.log('Development Container Manager found at etcd'
-                    .green);
-                dcmURL = url;
-            }, function (err) {
-                console.log('[ERROR] Finding DCM with etcd: '.red +
-                    JSON.stringify(err));
-                dcmURL = null;
-            });
-    }
-};
+/**
+ * Try to find the Mogno-IPE host ('ipe'). It saves the URL at this.ipeURL.
+ */
+EtcdManager.prototype.findIPE = function () {
+    serviceFinder(IPE_SERVICE_KEY, 'Mogno IPE', function(url){
+        ipeURL = url;
+    });
+}
 
 /**
  * Try to get DCM url retrieved by etcd.
@@ -98,6 +128,15 @@ EtcdManager.prototype.findDCM = function () {
  */
 EtcdManager.prototype.getDcmUrl = function () {
     return dcmURL;
+};
+
+/**
+ * Try to get IPE url retrieved by etcd.
+ *
+ * @return {string} ipeURL A url to access the mogno-IPE address
+ */
+EtcdManager.prototype.getIpeUrl = function () {
+    return ipeURL;
 };
 
 module.exports = EtcdManager;

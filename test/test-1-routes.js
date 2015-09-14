@@ -323,6 +323,33 @@ describe('Routing tests --> ', function () {
                     });
             }
         );
+        
     });
 
+    describe('IPE calls ar working well when:', function() {
+        it('I can request an specific container',
+            function(done){
+                var load = {
+                    projectId: 'myProject001',
+                    machineAlias: 'simonfan/code-machine'
+                };
+                server
+                    .post('/createContainer', load)
+                    .expect(200);
+                done();
+            }
+        );
+        
+        it('Previous request should fail when I forget important data',
+            function(done){
+                var load = {
+                    projectId: 'myProject001',
+                }
+                server
+                    .post('/createContainer', load)
+                    .expect(400)
+                done();
+            }
+        );
+    })
 });
