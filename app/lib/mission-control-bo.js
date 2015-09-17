@@ -1,6 +1,7 @@
 'use strict';
 var CM = require('./code-machine-cli');
 var dcm = require('./ide-development-container-manager-cli');
+var ipe = require('./mogno-ipe-client');
 
 /**
  * Pedir uma maquina pro dcm e nesse momento criar uma
@@ -39,5 +40,22 @@ exports.createDevContainer = function (dcmURL, project, cb) {
             };
         }
         cb(err, res, cm);
+    });
+};
+
+/**
+ * Sends an message to the IPE module requesting an specific machine to be
+ * instantiated
+ */
+exports.createUserContainer = function (ipeURL, project, machineAlias, cb) {
+
+    // NOTE: The machineAlias is not necessarily the docker image name.
+    // This is the place where we sholud map machineAlias to image name
+    // (Assuming the b.o. is the one who knows everything)
+    var dockerImage = machineAlias;
+
+    ipe.create(ipeURL, project, dockerImage, function (err, res) {
+        // Nothing else to do?
+        cb(err, res);
     });
 };
