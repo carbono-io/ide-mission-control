@@ -1,6 +1,7 @@
 'use strict';
 var request = require('request');
 var CJM = require('carbono-json-messages');
+var pjson = require('../../package.json');
 
 /**
  * Creates and/or retrieves an docker instance and
@@ -23,7 +24,7 @@ exports.create = function (ipeURL, proj, alias, cb) {
             'Content-Type': 'application/json',
         };
         var aux = {
-            apiVersion: '1.0',
+            apiVersion: pjson.version,
             id: 'xyzzy-wyzzy',
             data: {
                 id: '1337',
@@ -61,7 +62,7 @@ exports.create = function (ipeURL, proj, alias, cb) {
 
     } else {
         // If there is no IPE reference, nothing can be done. Sends an Error.
-        var cjm = new CJM({apiVersion: '1.0'});
+        var cjm = new CJM({apiVersion: pjson.version});
         try {
             var err = {
                    code: 400,

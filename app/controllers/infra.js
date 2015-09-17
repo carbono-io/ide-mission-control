@@ -2,19 +2,20 @@
 var CJM  = require('carbono-json-messages');
 var uuid = require('node-uuid');
 var bo   = require('../lib/mission-control-bo');
+var pjson = require('../../package.json');
 
 module.exports = function (app, etcdManager) {
-	
-	this.createContainer = function(req, res, next) {
-        
+
+    this.createContainer = function(req, res, next) {
+
         var projectId = req.body.projectId;
         var machineAlias = req.body.machineAlias;
-        
+
         // Check data consistency
-        // @todo Create an definitive helper for handling errors. 
+        // @todo Create an definitive helper for handling errors.
         //       There are too much repeated code in the repositories.
         if (!projectId || !machineAlias) {
-            var cjm = new CJM({apiVersion: '1.0'});
+            var cjm = new CJM({apiVersion: pjson.version});
             res.status(400);
             var error = {
                    code: 400,
@@ -30,7 +31,7 @@ module.exports = function (app, etcdManager) {
         // Get the IPE module URL
         var ipeURL = etcdManager.getIpeUrl();
         if (!ipeURL) {
-            var cjm = new CJM({apiVersion: '1.0'});
+            var cjm = new CJM({apiVersion: pjson.version});
             var error = {
                    code: 500,
                    message: 'Internal data is missing',
@@ -44,12 +45,12 @@ module.exports = function (app, etcdManager) {
         };
 
         // Now we can make the call to the business object.
-        bo.createUserContainer(ipeURL, projectId, machineAlias, 
+        bo.createUserContainer(ipeURL, projectId, machineAlias,
             /**
-             * Callback function 
+             * Callback function
              */
             function (err, ret) {
-                var cjm = new CJM({apiVersion: '1.0'});
+                var cjm = new CJM({apiVersion: pjson.version});
                 try {
                     if (err) {
                         res.status(400);
@@ -82,8 +83,8 @@ module.exports = function (app, etcdManager) {
                     res.status(500).end();
                 }
             }
-        );		
-	};
-	
+        );
+    };
+
     return this;
 };
