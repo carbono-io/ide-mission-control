@@ -53,7 +53,7 @@ exports.createUserContainer = function (ipeURL, project, machineAlias, cb) {
     // This is the place where we sholud map machineAlias to image name
     // (Assuming the b.o. is the one who knows everything)
     var dockerImage = machineAlias;
-    
+
     ipe.create(ipeURL, project, dockerImage, function (err, res) {
         // Nothing else to do?
         cb(err, res);

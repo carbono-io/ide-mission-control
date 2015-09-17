@@ -6,43 +6,47 @@ var pjson = require('../../package.json');
 
 module.exports = function (app, etcdManager) {
 
-    this.createContainer = function(req, res, next) {
+    this.createContainer = function (req, res) {
 
         var projectId = req.body.projectId;
         var machineAlias = req.body.machineAlias;
+        var cjm = null;
+        var error = null;
 
         // Check data consistency
         // @todo Create an definitive helper for handling errors.
         //       There are too much repeated code in the repositories.
         if (!projectId || !machineAlias) {
-            var cjm = new CJM({apiVersion: pjson.version});
+            cjm = new CJM({apiVersion: pjson.version});
             res.status(400);
-            var error = {
+            error = {
                    code: 400,
                    message: 'Missing mandatory parameters',
-                   errors: 'projectId and machineAlias should have an valid value',
+                   errors:
+                    'projectId and machineAlias should have an valid value',
                };
             cjm.setError(error);
             res.json(cjm);
             res.end();
             return;
-        };
+        }
 
         // Get the IPE module URL
         var ipeURL = etcdManager.getIpeUrl();
         if (!ipeURL) {
-            var cjm = new CJM({apiVersion: pjson.version});
-            var error = {
+            cjm = new CJM({apiVersion: pjson.version});
+            error = {
                    code: 500,
                    message: 'Internal data is missing',
-                   errors: 'ipeURL is not set in etcdManager, I can\'t send the request!'
+                   errors:
+                'ipeURL is not set in etcdManager, I can\'t send the request!',
                };
             res.status(500);
             cjm.setError(error);
             res.json(cjm);
             res.end();
             return;
-        };
+        }
 
         // Now we can make the call to the business object.
         bo.createUserContainer(ipeURL, projectId, machineAlias,

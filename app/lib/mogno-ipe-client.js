@@ -32,7 +32,7 @@ exports.create = function (ipeURL, proj, alias, cb) {
                 [
                     {
                         projectId: proj,
-                        machineAlias: alias
+                        machineAlias: alias,
                     },
                 ],
             },
