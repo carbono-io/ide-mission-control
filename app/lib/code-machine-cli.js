@@ -1,13 +1,22 @@
 'use strict';
 var request = require('request');
+var io = require('socket.io-client');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 
 /**
- * This class represents the Code Machine in the interactions
+ * Creates a connection to a code machine instance. The connection's instance
+ * proxies websocket events through an event emitter. CM.prototype.commands
+ * lists all events the code machine listens to, and which can be emitted
+ * through the connection instance. CM.prototype.events lists all events the
+ * code machine may emit (and to which the mission control may add listeners to
+ * the event emitter).
  *
  * @class CM
- * @param {Object} req - Request object
- * @param {string} req.url - Path for the file
- * @param {Object} res - Response containing the requested file
+ * @param {Object} container - represents the code machine instance.
+ * @param {string} container.markedURL - URL where the CM serves marked files.
+ * @param {string} container.cleanURL - URL where the CM serves clean files.
+ * @param {string} container.wsURL - URL for websocket connection to the CM.
  */
 var CM = function (container) {
     this.container = container;
@@ -19,83 +28,42 @@ var CM = function (container) {
     if (!this.container.cleanURL) {
         throw 'Container must contain clean url.';
     }
+
+    this.ws = io.connect(container.wsURL);
+
+    this.ws.on('connect', function () {
+        for (var i in this.events) {
+            var ev = this.events[i];
+            this.ws.on(ev, this.emit.bind(this, ev));
+        }
+    }.bind(this));
+
+    for (var i in this.commands) {
+        var cmd = this.commands[i];
+        this.on(cmd, this.ws.emit.bind(this.ws, cmd));
+    }
+
+    EventEmitter.call(this);
     return this;
 };
 
-/**
- * Creates reference for CM
- *
- * @todo Implement...
- * @return {Object} obj.uuid Containing the Id of the CM
- */
-CM.prototype.create = function () {
-    return {
-        uuid: 'bla',
-    };
-};
+util.inherits(CM, EventEmitter);
 
-/**
- * Lists reference
- *
- * @todo Implement...
- * @return {Array} views Containing a list of references
- */
-CM.prototype.list = function () {
-    return {
-        views: [
-            {uuid: 1},
-            {uuid: 2},
-        ],
-    };
-};
+// Events which the code machine is listening to. May be emitted in the instance
+CM.prototype.commands = [
+    'command:insertElementAtXPath',
+    'command:insertElement',
+];
 
-/**
- * Deletes reference
- *
- * @todo Implement...
- * @return {Object} obj
- */
-CM.prototype.del = function () {
-    return {
-        good: 'bye',
-    };
-};
+// Events which the code machine may emit. Will be re-emitted in the instance
+CM.prototype.events = [
+    'control:contentUpdate',
+    'command:insertElementAtXPath/error',
+    'command:insertElementAtXPath/success',
+    'command:insertElement/error',
+    'command:insertElement/success',
+];
 
-/**
- * Appends a Node
- *
- * @todo Implement...
- * @return {Object} obj
- */
-CM.prototype.apNode = function () {
-    return {
-        uuid: '8hRSD7uyDm8302',
-    };
-};
-
-/**
- * Removes a Node
- *
- * @todo Implement...
- * @return {Object} obj
- */
-CM.prototype.rmNode = function () {
-    return {
-        good: 'bye',
-    };
-};
-
-/**
- * Edits a Node
- *
- * @todo Implement...
- * @return {Object} obj
- */
-CM.prototype.edNodeAtt = function () {
-    return {
-        it: 'is done',
-    };
-};
 
 /**
  * Handles request for a Marked file
@@ -117,7 +85,9 @@ CM.prototype.marked =  function (req, res) {
  * @param {Object} res - Response containing the requested file
  */
 CM.prototype.clean =  function (req, res) {
+    console.log(req.url);
     var cmURL = this.container.cleanURL + req.url;
+    console.log(cmURL);
     req.pipe(request(cmURL)).pipe(res);
 };
 
