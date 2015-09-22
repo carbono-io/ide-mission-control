@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.13.3",
-    "carbono-json-messages": "0.0.1",
+    "carbono-json-messages": "^0.0.2",
     "carbono-service-manager": "^0.0.3",
     "colors": "^1.1.2",
     "config": "^1.15.0",
@@ -22,6 +22,7 @@
     "express": "4.13.3",
     "express-http-proxy": "^0.6.0",
     "node-uuid": "^1.4.3",
+    "passport-http-bearer": "^1.0.1",
     "q": "^1.4.1",
     "request": "^2.60.0",
     "socket.io": "^1.3.6"
