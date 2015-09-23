@@ -32,11 +32,12 @@ function extractUser(message) {
  * Builds the options used by request module.
  *
  * @param {string} token - Bearer Token
+ * @param {string} authUrl - Base url for access carbono-auth
  * @return {Object} Object representing options for request module.
  *
  * @function
  */
-function buildRequestOptions(token) {
+function buildRequestOptions(token, authUrl) {
     var cjm = new CJM({apiVersion: pjson.version});
     cjm.setData({
         id: uuid.v4(),
@@ -48,7 +49,7 @@ function buildRequestOptions(token) {
     });
 
     return {
-        uri: 'http://localhost:3000/carbono-auth/bearer/validate',
+        uri: 'http://' + authUrl + '/bearer/validate',
         method: 'POST',
         json: cjm.toObject(),
     };
@@ -58,16 +59,17 @@ function buildRequestOptions(token) {
  * Find a user for the given token.
  *
  * @param {string} token - Bearer Token
+ * @param {string} authUrl - Base url for access carbono-auth
  * @return {Object} Object representing a promise.
  *
  * @function
  */
-module.exports.findUser = function (token) {
+module.exports.findUser = function (token, authUrl) {
     if (token) {
         var deffered = q.defer();
 
         request(
-            buildRequestOptions(token),
+            buildRequestOptions(token, authUrl),
             function (err, res) {
                 if (err) {
                     // Request error

@@ -7,8 +7,12 @@ var should = chai.should();
 
 describe('Wrapper for carbono-auth', function () {
 
+    before(function () {
+        this.urlMockAuth = 'localhost:3000/carbono-auth';
+    });
+
     it('finds an user with a valid token', function (done) {
-        var promise = authServer.findUser('token_valido');
+        var promise = authServer.findUser('token_valido', this.urlMockAuth);
 
         promise.then(
             function (user) {
@@ -34,7 +38,7 @@ describe('Wrapper for carbono-auth', function () {
     });
 
     it('can\'t find an user with an invalid token', function (done) {
-        var promise = authServer.findUser('token_invalido');
+        var promise = authServer.findUser('token_invalido', this.urlMockAuth);
 
         promise.then(
             function () {
@@ -50,7 +54,8 @@ describe('Wrapper for carbono-auth', function () {
     });
 
     it('must identify request errors', function (done) {
-        var promise = authServer.findUser('status code desconhecido');
+        var promise = authServer
+            .findUser('status code desconhecido', this.urlMockAuth);
 
         promise.then(
             function () {
@@ -66,7 +71,7 @@ describe('Wrapper for carbono-auth', function () {
     });
 
     it('must not create a promise when there\'s no token', function () {
-        var promise = authServer.findUser(null);
+        var promise = authServer.findUser(null, this.urlMockAuth);
         should.not.exist(promise);
     });
 });
