@@ -7,16 +7,14 @@ var uuid    = require('node-uuid');
 var q       = require('q');
 
 /**
- * Try to parse the message, to extract user informations.
+ * Try to extract user informations.
  *
  * @param {string} message - body attribute extracted from response object.
  * @return {Object=} Object representing an User.
  *
  * @function
  */
-function parseUser(message) {
-    message = JSON.parse(message);
-
+function extractUser(message) {
     var validStructure = message &&
         message.hasOwnProperty('data') &&
         message.data.hasOwnProperty('items') &&
@@ -50,7 +48,7 @@ function buildRequestOptions(token) {
     });
 
     return {
-        uri: 'http://localhost:3000/carbono-auth/validate',
+        uri: 'http://localhost:3000/carbono-auth/bearer/validate',
         method: 'POST',
         json: cjm.toObject(),
     };
@@ -77,7 +75,7 @@ module.exports.findUser = function (token) {
 
                 } else if (res.statusCode === 200) {
                     // User retrieved
-                    var user = parseUser(res.body);
+                    var user = extractUser(res.body);
 
                     if (user) {
                         deffered.resolve(user);

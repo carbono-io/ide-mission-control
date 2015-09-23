@@ -5,7 +5,7 @@ var authServer = require('../app/auth/lib/auth-server-wrapper');
 var chai = require('chai');
 var should = chai.should();
 
-describe('Authentication helper', function () {
+describe('Wrapper for carbono-auth', function () {
 
     it('finds an user with a valid token', function (done) {
         var promise = authServer.findUser('token_valido');
