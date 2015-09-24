@@ -19,14 +19,16 @@ describe('Wrapper for carbono-auth', function () {
                 should.exist(user);
                 user.should.be.an('object');
 
-                user.should.have.property('name');
-                should.equal(user.name, 'fulano');
+                user.should.have.property('displayName');
+                should.equal(user.displayName, 'fulano');
 
-                user.should.have.property('code');
-                should.equal(user.code, '1234');
+                user.should.have.property('id');
+                should.equal(user.id, '1234');
 
-                user.should.have.property('email');
-                should.equal(user.email, 'email@email.com');
+                user.should.have.property('emails');
+                user.emails.should.have.lenght > 0;
+                user.emails[0].should.have.property('value');
+                should.equal(user.emails[0].value, 'email@email.com');
             },
             function (err) {
                 should.fail(null, null, err);
