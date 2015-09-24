@@ -1,5 +1,6 @@
 {
     "htPort" : 7890,
     "wsPort" : 7891,
-    "host"	 : "127.0.0.1"
+    "host"	 : "127.0.0.1",
+    "basePath" : "carbono-auth"
 }
