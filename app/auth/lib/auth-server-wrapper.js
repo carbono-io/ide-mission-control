@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * Helper methods to communicate with Authentication Server
+ *
+ * @module Authentication Server Client
+ */
+
 var pjson   = require('../../../package.json');
 var CJM     = require('carbono-json-messages');
 var request = require('request');
