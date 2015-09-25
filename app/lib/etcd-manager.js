@@ -6,9 +6,11 @@ require('colors');
 var MC_SERVICE_KEY  = 'mc';
 var DCM_SERVICE_KEY = 'dcm';
 var IPE_SERVICE_KEY = 'ipe';
+var AUTH_SERVICE_KEY = 'auth';
 
 var dcmURL          = null;
 var ipeURL          = null;
+var authURL         = null;
 var serviceManager  = null;
 var registered      = false;
 
@@ -41,6 +43,7 @@ EtcdManager.prototype.init = function () {
 
         this.findDCM();
         this.findIPE();
+        this.findAuthServer();
         this.register();
     }
 };
@@ -120,6 +123,15 @@ EtcdManager.prototype.findIPE = function () {
 };
 
 /**
+ * Try to find the carbono-auth host ('auth'). It saves the URL at this.authURL.
+ */
+EtcdManager.prototype.findAuthServer = function () {
+    serviceFinder(AUTH_SERVICE_KEY, 'carbono-auth', function (url) {
+        authURL = url;
+    });
+};
+
+/**
  * Try to get DCM url retrieved by etcd.
  *
  * @function
@@ -136,6 +148,15 @@ EtcdManager.prototype.getDcmUrl = function () {
  */
 EtcdManager.prototype.getIpeUrl = function () {
     return ipeURL;
+};
+
+/**
+ * Try to get auth server url retrieved by etcd.
+ *
+ * @return {string} authURL A url to access the carbono-auth address
+ */
+EtcdManager.prototype.getAuthUrl = function () {
+    return authURL;
 };
 
 module.exports = EtcdManager;

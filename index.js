@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 app.ws = ws(wsPort);
 
 consign({cwd: 'app'})
+    .include('auth')
     .include('controllers')
     .include('routes')
     .into(app, etcdManager);
