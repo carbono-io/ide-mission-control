@@ -7,10 +7,12 @@ var MC_SERVICE_KEY  = 'mc';
 var DCM_SERVICE_KEY = 'dcm';
 var IPE_SERVICE_KEY = 'ipe';
 var AUTH_SERVICE_KEY = 'auth';
+var ACCM_SERVICE_KEY = 'accm';
 
 var dcmURL          = null;
 var ipeURL          = null;
 var authURL         = null;
+var accmURL         = null;
 var serviceManager  = null;
 var registered      = false;
 
@@ -44,6 +46,7 @@ EtcdManager.prototype.init = function () {
         this.findDCM();
         this.findIPE();
         this.findAuthServer();
+        this.findACCM();
         this.register();
     }
 };
@@ -132,6 +135,15 @@ EtcdManager.prototype.findAuthServer = function () {
 };
 
 /**
+ * Try to find the account-manager module. It saves the URL at this.accmURL.
+ */
+EtcdManager.prototype.findACCM = function () {
+    serviceFinder(ACCM_SERVICE_KEY, 'Account Manager ', function (url) {
+        accmURL = url;
+    });
+};
+
+/**
  * Try to get DCM url retrieved by etcd.
  *
  * @function
@@ -157,6 +169,15 @@ EtcdManager.prototype.getIpeUrl = function () {
  */
 EtcdManager.prototype.getAuthUrl = function () {
     return authURL;
+};
+
+/**
+ * Try to get accm server url retrieved by etcd.
+ *
+ * @return {string} accmURL A url to access the account-manager address
+ */
+EtcdManager.prototype.getACCMUrl = function () {
+    return accmURL;
 };
 
 module.exports = EtcdManager;
