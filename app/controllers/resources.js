@@ -1,5 +1,6 @@
 'use strict';
-var CJM = require('carbono-json-messages');
+
+var CJM  = require('carbono-json-messages');
 var uuid = require('node-uuid');
 
 /**

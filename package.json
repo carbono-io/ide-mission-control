@@ -14,8 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.13.3",
-    "carbono-json-messages": "^0.0.2",
-    "carbono-service-manager": "^0.0.3",
+    "carbono-json-messages": "0.0.2",
+    "carbono-service-manager": "0.0.4",
     "colors": "^1.1.2",
     "config": "^1.15.0",
     "consign": "^0.1.1",

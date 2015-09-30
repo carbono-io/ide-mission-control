@@ -1,10 +1,12 @@
 'use strict';
-var CJM  = require('carbono-json-messages');
-var uuid = require('node-uuid');
-var bo   = require('../lib/mission-control-bo');
-var pjson = require('../../package.json');
 
-module.exports = function (app, etcdManager) {
+var CJM   = require('carbono-json-messages');
+var uuid  = require('node-uuid');
+var bo    = require('../lib/mission-control-bo');
+var pjson = require('../../package.json');
+var etcd  = require('../../lib/etcd-manager');
+
+module.exports = function (app) {
 
     this.createContainer = function (req, res) {
 
@@ -32,7 +34,7 @@ module.exports = function (app, etcdManager) {
         }
 
         // Get the IPE module URL
-        var ipeURL = etcdManager.getIpeUrl();
+        var ipeURL = etcd.getServiceUrl('ipe');
         if (!ipeURL) {
             cjm = new CJM({apiVersion: pjson.version});
             error = {

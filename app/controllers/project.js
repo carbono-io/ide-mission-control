@@ -1,9 +1,11 @@
 'use strict';
-var bo  = require('../lib/mission-control-bo');
-var uuid = require('node-uuid');
-var AccountManager = require('../lib/AccountManagerHelper');
 
-module.exports = function (app, etcdManager) {
+var bo             = require('../lib/mission-control-bo');
+var uuid           = require('node-uuid');
+var AccountManager = require('../lib/AccountManagerHelper');
+var etcd           = require('../../lib/etcd-manager');
+
+module.exports = function (app) {
     var RequestHelper = require('../lib/RequestHelper');
     var reqHelper = new RequestHelper();
     /**
@@ -33,7 +35,7 @@ module.exports = function (app, etcdManager) {
                 } else {
                     try {
                         // Discovers with etcdManager the ACCM URL
-                        var accmURL = etcdManager.getACCMUrl();
+                        var accmURL = etcd.getServiceUrl('accm');
                         var accm = new AccountManager(accmURL);
                         // Discover correct projectId
                         accm.createProject(userData).then(
@@ -41,7 +43,7 @@ module.exports = function (app, etcdManager) {
                                 var projectId = project.code;
                                 // Calls DCM to create the machine
                                 // Discovers with etcdManager the DCM URL
-                                var dcmURL = etcdManager.getDcmUrl();
+                                var dcmURL = etcd.getServiceUrl('dcm');
                                 bo.createDevContainer(dcmURL, projectId,
                                     /**
                                      * Callback function for the creation of
