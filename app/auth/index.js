@@ -3,7 +3,7 @@
 var passport = require('passport');
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var helper = require('./lib/auth-server-wrapper');
-var etcd   = require('../../lib/etcd-manager');
+var etcd   = require('carbono-service-manager');
 
 module.exports = function (app) {
     app.use(passport.initialize());

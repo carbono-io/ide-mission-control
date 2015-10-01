@@ -3,7 +3,7 @@
 var bo             = require('../lib/mission-control-bo');
 var uuid           = require('node-uuid');
 var AccountManager = require('../lib/AccountManagerHelper');
-var etcd           = require('../../lib/etcd-manager');
+var etcd           = require('carbono-service-manager');
 
 module.exports = function (app) {
     var RequestHelper = require('../lib/RequestHelper');

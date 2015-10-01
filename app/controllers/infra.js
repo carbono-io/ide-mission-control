@@ -4,7 +4,7 @@ var CJM   = require('carbono-json-messages');
 var uuid  = require('node-uuid');
 var bo    = require('../lib/mission-control-bo');
 var pjson = require('../../package.json');
-var etcd  = require('../../lib/etcd-manager');
+var etcd  = require('carbono-service-manager');
 
 module.exports = function (app) {
 

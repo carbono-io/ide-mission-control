@@ -25,7 +25,7 @@ var server = app.listen(htPort, function () {
     var port = server.address().port;
     console.log('Mission-Control listening at http://%s:%s', host, port);
     // Service discovery and registration
-    require('./lib/etcd-manager');
+    require('carbono-service-manager');
 });
 
 module.exports = server;

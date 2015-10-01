@@ -8,7 +8,7 @@
         "port": 7892,
         "key" : "mc",
         "alias" : "Carbono Mission-Control",
-        "hosts" : [
+        "dependencies" : [
             {"key" : "dcm", "alias" : "Jardim DCM"},
             {"key" : "ipe", "alias" : "Mogno Ipê"},
             {"key" : "auth", "alias" : "Carbono OAuth2"},
