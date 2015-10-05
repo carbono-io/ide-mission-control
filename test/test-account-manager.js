@@ -15,11 +15,10 @@ describe('AccountManagerHelper', function () {
             promiss
                 .then(
                     function (res) {
-                        res[0].should.have.property('project');
-                        res[0].project.should.have.property('safeName');
-                        res[0].project.should.have.property('name');
-                        res[0].project.should.have.property('description');
-                        res[0].project.should.have.property('code');
+                        res.should.have.property('safeName');
+                        res.should.have.property('name');
+                        res.should.have.property('description');
+                        res.should.have.property('code');
                     }
                 )
                 .done(function () {
@@ -61,6 +60,4 @@ describe('AccountManagerHelper', function () {
                 });
         });
     });
-
-
 });
