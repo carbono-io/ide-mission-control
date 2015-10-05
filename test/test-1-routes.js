@@ -66,26 +66,6 @@ function createAuthStub() {
                     req.user = buildUser(200);
                     break;
                 }
-                case 'token_201': {
-                    req.user = buildUser(201);
-                    break;
-                }
-                case 'token_400': {
-                    req.user = buildUser(400);
-                    break;
-                }
-                case 'token_403': {
-                    req.user = buildUser(403);
-                    break;
-                }
-                case 'token_404': {
-                    req.user = buildUser(404);
-                    break;
-                }
-                case 'token_500': {
-                    req.user = buildUser(500);
-                    break;
-                }
                 default: {
                     break;
                 }
