@@ -59,10 +59,8 @@ function buildUser(code) {
 function createAuthStub() {
     authStub = sinon.stub(authenticate, 'auth',
     function (req, res, next) {
-        var token = req.headers.authorization.split(' ');
-        if (token.length <= 1) {
-            next();
-        } else {
+        if (req.headers.authorization) {
+            var token = req.headers.authorization.split(' ');
             switch (token[1]) {
                 case 'token_200': {
                     req.user = buildUser(200);
@@ -92,6 +90,9 @@ function createAuthStub() {
                     break;
                 }
             }
+            next();
+        } else {
+            req.user = null;
             next();
         }
     });
@@ -214,7 +215,64 @@ describe('Routing tests --> ', function () {
                 });
         });
     });
+    describe('Routes that require a created project - ' +
+    'This test should work when:', function () {
+        before(function (done) {
+            server
+                .post('/projects')
+                .set('Authorization', 'Bearer token_200')
+                .send(correctPostMessage({
+                        name: 'Project 500',
+                        description: 'Description',
+                    }))
+                .end(function (err,res) {
+                    should.not.exist(err);
+                    res.status.should.equal(500);
+                    try {
+                        var jsonResponse = res.body;
+                        defaultErrorResponse(jsonResponse);
+                    } catch (e) {
+                        return done(e);
+                    }
+                    done();
+                });
+        });
+        it('a clean HTML file cannot be retrieved with invalid project',
+        function (done) {
+            server
+                .get('/projects/fakeProjectId/resources/clean/src/index.html')
+                .set('Authorization', 'Bearer token_200')
+                .end(function (err,res) {
+                    should.not.exist(err);
+                    res.status.should.equal(400);
+                    try {
+                        var jsonResponse = JSON.parse(res.body);
+                        defaultErrorResponse(jsonResponse);
+                    } catch (e) {
+                        return done(e);
+                    }
+                    done();
+                });
+        });
 
+        it('a clean HTML file cannot be retrieved with invalid project',
+        function (done) {
+            server
+                .get('/projects/fakeProjectId/resources/marked/src/index.html')
+                .set('Authorization', 'Bearer token_200')
+                .end(function (err,res) {
+                    should.not.exist(err);
+                    res.status.should.equal(400);
+                    try {
+                        var jsonResponse = JSON.parse(res.body);
+                        defaultErrorResponse(jsonResponse);
+                    } catch (e) {
+                        return done(e);
+                    }
+                    done();
+                });
+        });
+    });
     describe('Routes that require a created project - ' +
     'This test should work when:', function () {
         var projectId = '';
@@ -398,26 +456,46 @@ describe('Routing tests --> ', function () {
     describe('IPE calls ar working well when:', function () {
         it('I can request an specific container',
             function (done) {
-                var load = {
-                    projectId: 'myProject001',
-                    machineAlias: 'simonfan/code-machine',
-                };
                 server
-                    .post('/createContainer', load)
-                    .expect(200);
-                done();
+                    .post('/createContainer')
+                    .set('Authorization', 'Bearer token_200')
+                    .send(correctPostMessage({
+                            projectId: 'myProject001',
+                            machineAlias: 'simonfan/code-machine',
+                        }))
+                    .end(function (err,res) {
+                        should.not.exist(err);
+                        res.status.should.equal(200);
+                        try {
+                            var jsonResponse = JSON.parse(res.body);
+                            defaultResponse(jsonResponse);
+                        } catch (e) {
+                            return done(e);
+                        }
+                        done();
+                    });
             }
         );
 
         it('Previous request should fail when I forget important data',
             function (done) {
-                var load = {
-                    projectId: 'myProject001',
-                };
                 server
-                    .post('/createContainer', load)
-                    .expect(400);
-                done();
+                    .post('/createContainer')
+                    .set('Authorization', 'Bearer token_200')
+                    .send(correctPostMessage({
+                            projectId: 'myProject001',
+                        }))
+                    .end(function (err,res) {
+                        should.not.exist(err);
+                        res.status.should.equal(400);
+                        try {
+                            var jsonResponse = JSON.parse(res.body);
+                            defaultErrorResponse(jsonResponse);
+                        } catch (e) {
+                            return done(e);
+                        }
+                        done();
+                    });
             }
         );
     });

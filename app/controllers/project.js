@@ -90,11 +90,13 @@ module.exports = function (app) {
                                 );
                             },
                             function (error) {
+                                app.cm = null;
                                 reqHelper.createResponse(res, error.code,
                                     error.message);
                             }
                         );
                     } catch (e) {
+                        app.cm = null;
                         reqHelper.createResponse(res, 500,
                             e);
                     }
