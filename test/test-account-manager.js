@@ -15,6 +15,7 @@ describe('AccountManagerHelper', function () {
             promiss
                 .then(
                     function (res) {
+                        should;
                         res.should.have.property('safeName');
                         res.should.have.property('name');
                         res.should.have.property('description');

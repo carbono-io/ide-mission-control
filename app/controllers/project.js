@@ -68,11 +68,18 @@ module.exports = function (app) {
                                                     err,].join(' - '));
                                             } else {
                                                 app.cm = cm;
+                                                project.markedURL =
+                                                ret.markedURL;
+                                                project.srcURL = ret.srcURL;
                                                 reqHelper.createResponse(res,
                                                     201,
                                                     {
                                                         id: uuid.v4(),
-                                                        items: [ret],
+                                                        items: [ {
+                                                                project:
+                                                                project,
+                                                            },
+                                                        ],
                                                     });
                                             }
                                         } catch (e) {
@@ -96,8 +103,8 @@ module.exports = function (app) {
                 reqHelper.createResponse(res, 400, 'Malformed request');
             }
         } else {
-            reqHelper.createResponse(res, 400,
-                'Malformed request');
+            reqHelper.createResponse(res, 403,
+                'Unauthorized');
         }
     };
 

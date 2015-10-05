@@ -13,6 +13,7 @@ var wsPort = config.get('wsPort');
 app.use(bodyParser.json());
 
 app.ws = ws(wsPort);
+app.authenticate = require('./app/authenticate').auth;
 
 consign({cwd: 'app'})
     .include('auth')

@@ -64,7 +64,6 @@ CM.prototype.events = [
     'command:insertElement/success',
 ];
 
-
 /**
  * Handles request for a Marked file
  *

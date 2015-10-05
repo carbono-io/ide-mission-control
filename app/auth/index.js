@@ -7,7 +7,6 @@ var etcd   = require('carbono-service-manager');
 
 module.exports = function (app) {
     app.use(passport.initialize());
-    app.use(passport.authenticate('bearer', { session: false }));
 
     passport.use(new BearerStrategy(
         function (token, done) {

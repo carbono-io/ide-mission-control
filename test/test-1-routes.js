@@ -1,7 +1,8 @@
 'use strict';
 var request = require('supertest');
-var should = require('should');
-
+var sinon    = require('sinon');
+var should = require('chai').should();
+var authenticate = require('../app/authenticate');
 var url = 'http://localhost:7890';
 
 var server = request.agent(url);
@@ -14,17 +15,102 @@ function defaultResponse(res) {
     res.data.items.should.be.instanceof(Array);
 }
 
+function defaultErrorResponse(res) {
+    res.should.have.property('apiVersion');
+    res.should.have.property('id');
+    res.should.have.property('error');
+    res.error.should.have.property('code');
+    res.error.should.have.property('message');
+}
+
+function correctPostMessage(info) {
+    return {
+            apiVersion: '1.0',
+            id: '12345',
+            data: {
+                id: '98765',
+                items: [
+                    info,
+                ],
+            },
+        };
+}
+
 var serverObj;
+var authStub;
+function buildUser(code) {
+    return {
+        provider: 'carbono-oauth2',
+        id: 'ladas45Fake',
+        displayName: 'Fake Name',
+        name: {
+            familyName: 'Fake Name',
+            givenName: 'Fake Name',
+            middleName: '',
+        },
+        emails: [{
+            value: 'email@' + code + '.com',
+            type: 'personal',
+        },],
+        photos: [],
+    };
+}
+
+function createAuthStub() {
+    authStub = sinon.stub(authenticate, 'auth',
+    function (req, res, next) {
+        var token = req.headers.authorization.split(' ');
+        if (token.length <= 1) {
+            next();
+        } else {
+            switch (token[1]) {
+                case 'token_200': {
+                    req.user = buildUser(200);
+                    break;
+                }
+                case 'token_201': {
+                    req.user = buildUser(201);
+                    break;
+                }
+                case 'token_400': {
+                    req.user = buildUser(400);
+                    break;
+                }
+                case 'token_403': {
+                    req.user = buildUser(403);
+                    break;
+                }
+                case 'token_404': {
+                    req.user = buildUser(404);
+                    break;
+                }
+                case 'token_500': {
+                    req.user = buildUser(500);
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+            next();
+        }
+    });
+    return authStub;
+}
 
 describe('Routing tests --> ', function () {
-    before(function () {
-        // Starting Server
+    before(function (done) {
+        this.timeout(5000);
+        createAuthStub();
         serverObj = require('../');
+        done();
     });
 
-    after(function () {
+    after(function (done) {
         // Closing Server
         serverObj.close();
+        authStub.restore();
+        done();
     });
 
     describe('Basic routes - This test should work when:', function () {
@@ -32,13 +118,8 @@ describe('Routing tests --> ', function () {
         it('root url is accessible', function (done) {
             server
                 .get('/')
-                .expect('Content-type',/json/)
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
-                    // To shut up JSHint
                     should.not.exist(err);
                     res.status.should.equal(200);
                     try {
@@ -53,27 +134,37 @@ describe('Routing tests --> ', function () {
                     done();
                 });
         });
+    });
 
+    describe('Project Routes:', function () {
         it('project can be created', function (done) {
             server
-                .post('/project')
-                .expect('Content-type',/json/)
-                .expect(200)
+                .post('/projects')
+                .set('Authorization', 'Bearer token_200')
+                .send(correctPostMessage({
+                        name: 'Project 201',
+                        description: 'Description',
+                    }))
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
-                    res.status.should.equal(200);
+                    should.not.exist(err);
+                    res.status.should.equal(201);
                     try {
-                        var jsonResponse = JSON.parse(res.body);
+                        var jsonResponse = res.body;
                         defaultResponse(jsonResponse);
-                        // ID is projectId
-                        jsonResponse.data.should.have.property('id');
-                        // Marked and Clean URL
-                        jsonResponse.data.items[0].should.have.
-                        property('markedURL');
-                        jsonResponse.data.items[0].should.have.
-                        property('srcURL');
+                        jsonResponse.data.items[0].
+                        should.have.property('project');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('code');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('safeName');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('name');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('description');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('markedURL');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('srcURL');
                     } catch (e) {
                         return done(e);
                     }
@@ -81,23 +172,41 @@ describe('Routing tests --> ', function () {
                 });
         });
 
-        it('projects can be listed', function (done) {
+        it('project cannot be created - Missing description', function (done) {
             server
-                .get('/project')
-                .expect('Content-type',/json/)
-                .expect(200)
+                .post('/projects')
+                .set('Authorization', 'Bearer token_200')
+                .send(correctPostMessage({
+                        name: 'Project 201',
+                    }))
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
-                    res.status.should.equal(200);
+                    should.not.exist(err);
+                    res.status.should.equal(400);
                     try {
-                        var jsonResponse = JSON.parse(res.body);
-                        defaultResponse(jsonResponse);
-                        jsonResponse.data.items[0].should.have.
-                        property('containers');
-                        // To do
-                        // List projects
+                        var jsonResponse = res.body;
+                        defaultErrorResponse(jsonResponse);
+                    } catch (e) {
+                        return done(e);
+                    }
+                    done();
+                });
+        });
+
+        it('project cannot be created - Invalid Authorization',
+        function (done) {
+            server
+                .post('/projects')
+                .send(correctPostMessage({
+                        name: 'Project 201',
+                        description: 'Description',
+                    }))
+                .set('Authorization', 'Bearer invalid')
+                .end(function (err,res) {
+                    should.not.exist(err);
+                    res.status.should.equal(403);
+                    try {
+                        var jsonResponse = res.body;
+                        defaultErrorResponse(jsonResponse);
                     } catch (e) {
                         return done(e);
                     }
@@ -109,54 +218,37 @@ describe('Routing tests --> ', function () {
     describe('Routes that require a created project - ' +
     'This test should work when:', function () {
         var projectId = '';
-        var resourcesPath = '/project/' + projectId + '/resources';
-        beforeEach(function (done) {
+        var resourcesPath = '/projects/' + projectId + '/resources';
+        before(function (done) {
             server
-                .post('/project')
-                .expect('Content-type',/json/)
-                .expect(200)
+                .post('/projects')
+                .set('Authorization', 'Bearer token_200')
+                .send(correctPostMessage({
+                        name: 'Project 201',
+                        description: 'Description',
+                    }))
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
-                    res.status.should.equal(200);
+                    should.not.exist(err);
+                    res.status.should.equal(201);
                     try {
-                        var jsonResponse = JSON.parse(res.body);
+                        var jsonResponse = res.body;
                         defaultResponse(jsonResponse);
-                        // ID is projectId
-                        jsonResponse.data.should.have.property('id');
-                        projectId = jsonResponse.data.id;
-                        resourcesPath = '/project/' + projectId + '/resources';
-                        // Marked and Clean URL
-                        jsonResponse.data.items[0].should.have.
-                        property('markedURL');
-                        jsonResponse.data.items[0].should.have.
-                        property('srcURL');
-                    } catch (e) {
-                        return done(e);
-                    }
-                    done();
-                });
-        });
-
-        it('project can be retrieved', function (done) {
-            server
-                .get('/project/' + projectId)
-                .expect('Content-type',/json/)
-                .expect(200)
-                .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
-                    res.status.should.equal(200);
-                    try {
-                        var jsonResponse = JSON.parse(res.body);
-                        defaultResponse(jsonResponse);
-                        jsonResponse.data.items[0].should.have.
-                        property('projectId');
-                        jsonResponse.data.items[0].projectId.should.
-                        equal(projectId);
-                        // To do .. retrive project
+                        jsonResponse.data.items[0].
+                        should.have.property('project');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('code');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('safeName');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('name');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('description');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('markedURL');
+                        jsonResponse.data.items[0].
+                        project.should.have.property('srcURL');
+                        projectId = jsonResponse.data.items[0].project.code;
+                        resourcesPath = '/projects/' + projectId + '/resources';
                     } catch (e) {
                         return done(e);
                     }
@@ -167,12 +259,9 @@ describe('Routing tests --> ', function () {
         it('cli is accessible', function (done) {
             server
                 .get(resourcesPath + '/cli')
-                .expect('Content-type',/json/)
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.status.should.equal(200);
                     try {
                         var jsonResponse = JSON.parse(res.body);
@@ -189,12 +278,9 @@ describe('Routing tests --> ', function () {
         it('gui is accessible', function (done) {
             server
                 .get(resourcesPath + '/gui')
-                .expect('Content-type',/json/)
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.status.should.equal(200);
                     try {
                         var jsonResponse = JSON.parse(res.body);
@@ -211,11 +297,9 @@ describe('Routing tests --> ', function () {
         it('a marked HTML file can be retrieved', function (done) {
             server
                 .get(resourcesPath + '/marked/src/index.html')
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.should.be.html;
                     res.status.should.equal(200);
                     done();
@@ -225,11 +309,9 @@ describe('Routing tests --> ', function () {
         it('a clean HTML file can be retrieved', function (done) {
             server
                 .get(resourcesPath + '/clean/src/index.html')
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.should.be.html;
                     res.status.should.equal(200);
                     done();
@@ -239,11 +321,9 @@ describe('Routing tests --> ', function () {
         it('a marked non-HTML file can be retrieved', function (done) {
             server
                 .get(resourcesPath + '/marked/src/index.css')
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.should.be.html;
                     res.status.should.equal(200);
                     done();
@@ -253,11 +333,9 @@ describe('Routing tests --> ', function () {
         it('a clean non-HTML file can be retrieved', function (done) {
             server
                 .get(resourcesPath + '/clean/src/index.css')
-                .expect(200)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.should.be.html;
                     res.status.should.equal(200);
                     done();
@@ -267,11 +345,9 @@ describe('Routing tests --> ', function () {
         it('a invalid marked HTML file cannot be retrieved', function (done) {
             server
                 .get(resourcesPath + '/marked/src/index2.html')
-                .expect(404)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.should.be.html;
                     res.status.should.equal(404);
                     done();
@@ -281,11 +357,9 @@ describe('Routing tests --> ', function () {
         it('a invalid clean HTML file cannot be retrieved', function (done) {
             server
                 .get(resourcesPath + '/clean/src/index2.html')
-                .expect(404)
+                .set('Authorization', 'Bearer token_200')
                 .end(function (err,res) {
-                    if (err) {
-                        return done(err);
-                    }
+                    should.not.exist(err);
                     res.should.be.html;
                     res.status.should.equal(404);
                     done();
@@ -296,11 +370,9 @@ describe('Routing tests --> ', function () {
             function (done) {
                 server
                     .get(resourcesPath + '/clean/src/index2.css')
-                    .expect(404)
+                    .set('Authorization', 'Bearer token_200')
                     .end(function (err,res) {
-                        if (err) {
-                            return done(err);
-                        }
+                        should.not.exist(err);
                         res.should.be.html;
                         res.status.should.equal(404);
                         done();
@@ -312,26 +384,23 @@ describe('Routing tests --> ', function () {
             function (done) {
                 server
                     .get(resourcesPath + '/marked/src/index2.css')
-                    .expect(404)
+                    .set('Authorization', 'Bearer token_200')
                     .end(function (err,res) {
-                        if (err) {
-                            return done(err);
-                        }
+                        should.not.exist(err);
                         res.should.be.html;
                         res.status.should.equal(404);
                         done();
                     });
             }
         );
-        
     });
 
-    describe('IPE calls ar working well when:', function() {
+    describe('IPE calls ar working well when:', function () {
         it('I can request an specific container',
-            function(done){
+            function (done) {
                 var load = {
                     projectId: 'myProject001',
-                    machineAlias: 'simonfan/code-machine'
+                    machineAlias: 'simonfan/code-machine',
                 };
                 server
                     .post('/createContainer', load)
@@ -339,17 +408,17 @@ describe('Routing tests --> ', function () {
                 done();
             }
         );
-        
+
         it('Previous request should fail when I forget important data',
-            function(done){
+            function (done) {
                 var load = {
                     projectId: 'myProject001',
-                }
+                };
                 server
                     .post('/createContainer', load)
-                    .expect(400)
+                    .expect(400);
                 done();
             }
         );
-    })
+    });
 });
