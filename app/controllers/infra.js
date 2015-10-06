@@ -1,52 +1,29 @@
 'use strict';
-var CJM  = require('carbono-json-messages');
-var uuid = require('node-uuid');
-var bo   = require('../lib/mission-control-bo');
-var pjson = require('../../package.json');
 
-module.exports = function (app, etcdManager) {
+var CJM   = require('carbono-json-messages');
+var uuid  = require('node-uuid');
+var bo    = require('../lib/mission-control-bo');
+var pjson = require('../../package.json');
+var etcd  = require('carbono-service-manager');
+
+module.exports = function () {
 
     this.createContainer = function (req, res) {
-
-        var projectId = req.body.projectId;
-        var machineAlias = req.body.machineAlias;
+        var projectId = req.body.data.items[0].projectId;
+        var machineAlias = req.body.data.items[0].machineAlias;
         var cjm = null;
         var error = null;
 
-        // Check data consistency
-        // @todo Create an definitive helper for handling errors.
-        //       There are too much repeated code in the repositories.
-        if (!projectId || !machineAlias) {
-            cjm = new CJM({apiVersion: pjson.version});
+        cjm = createContainerValidation(cjm, error, projectId,
+            machineAlias);
+        if (cjm !== null) {
             res.status(400);
-            error = {
-                   code: 400,
-                   message: 'Missing mandatory parameters',
-                   errors:
-                    'projectId and machineAlias should have an valid value',
-               };
-            cjm.setError(error);
             res.json(cjm);
             res.end();
             return;
         }
-
         // Get the IPE module URL
-        var ipeURL = etcdManager.getIpeUrl();
-        if (!ipeURL) {
-            cjm = new CJM({apiVersion: pjson.version});
-            error = {
-                   code: 500,
-                   message: 'Internal data is missing',
-                   errors:
-                'ipeURL is not set in etcdManager, I can\'t send the request!',
-               };
-            res.status(500);
-            cjm.setError(error);
-            res.json(cjm);
-            res.end();
-            return;
-        }
+        var ipeURL = etcd.getServiceUrl('ipe');
 
         // Now we can make the call to the business object.
         bo.createUserContainer(ipeURL, projectId, machineAlias,
@@ -89,6 +66,26 @@ module.exports = function (app, etcdManager) {
             }
         );
     };
+
+    function createContainerValidation(cjm, error, projectId,
+        machineAlias) {
+        // Check data consistency
+        // @todo Create an definitive helper for handling errors.
+        //       There are too much repeated code in the repositories.
+        if (!projectId || !machineAlias) {
+            cjm = new CJM({apiVersion: pjson.version});
+            error = {
+                   code: 400,
+                   message: 'Missing mandatory parameters',
+                   errors:
+                    'projectId and machineAlias should have an valid value',
+               };
+            cjm.setError(error);
+            return cjm;
+        } else {
+            return null;
+        }
+    }
 
     return this;
 };

@@ -1,68 +1,41 @@
 'use strict';
 
-/**
- * @todo Get cm from user context
- */
 module.exports = function (app) {
 
-    this.create = function (socket) {
+    /**
+     * On connection, register listeners to commands that the client (IDE) may
+     * emit to the code machine, and re-emits them to the CM connection.
+     */
+    this.registerCommands = function (socket) {
         if (!app.cm) {
+            console.log('No instance of Code Machine found!');
             return;
         }
-        socket.on('create', function () {
-            var file = app.cm.create();
-            socket.emit('created', file);
+
+        app.cm.commands.forEach(function (cmd) {
+            socket.on(cmd, app.cm.emit.bind(app.cm, cmd));
         });
     };
 
-    this.list = function (socket) {
+    /**
+     * On connection, register listeners to events that the code machine may
+     * emit, and re-emits them to the socket with client (IDE).
+     */
+    this.registerEvents = function (socket) {
         if (!app.cm) {
+            console.log('No instance of Code Machine found!');
             return;
         }
-        socket.on('list', function () {
-            var list = app.cm.list();
-            socket.emit('listed', list);
+
+        app.cm.events.forEach(function (ev) {
+            var listener = socket.emit.bind(socket, ev);
+
+            app.cm.on(ev, listener);
+            socket.on('disconnect', function () {
+                app.cm.removeListener(ev, listener);
+            });
         });
     };
 
-    this.delete = function (socket) {
-        if (!app.cm) {
-            return;
-        }
-        socket.on('delete', function () {
-            var res = app.cm.del();
-            socket.emit('deleted', res);
-        });
-    };
-
-    this.apNode = function (socket) {
-        if (!app.cm) {
-            return;
-        }
-        socket.on('apNode', function () {
-            var node = app.cm.apNode();
-            socket.emit('added', node);
-        });
-    };
-
-    this.rmNode = function (socket) {
-        if (!app.cm) {
-            return;
-        }
-        socket.on('rmNode', function () {
-            var res = app.cm.rmNode();
-            socket.emit('removed', res);
-        });
-    };
-
-    this.edNodeAtt = function (socket) {
-        if (!app.cm) {
-            return;
-        }
-        socket.on('edNodeAtt', function () {
-            var res = app.cm.edNodeAtt();
-            socket.emit('changed', res);
-        });
-    };
     return this;
 };

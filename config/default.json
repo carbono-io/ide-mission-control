@@ -1,5 +1,18 @@
 {
     "htPort" : 7890,
     "wsPort" : 7891,
-    "host"	 : "127.0.0.1"
+    "host"	 : "127.0.0.1",
+    "basePath" : "carbono-auth",
+    "etcd": {
+        "host": "127.0.0.1",
+        "port": 7892,
+        "key" : "mc",
+        "alias" : "Carbono Mission-Control",
+        "dependencies" : [
+            {"key" : "dcm", "alias" : "Jardim DCM"},
+            {"key" : "ipe", "alias" : "Mogno Ipê"},
+            {"key" : "auth", "alias" : "Carbono OAuth2"},
+            {"key" : "accm", "alias" : "Bromelia Imperial"}
+        ]
+    }
 }
