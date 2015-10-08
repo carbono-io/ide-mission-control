@@ -2,7 +2,7 @@
     "htPort" : 7890,
     "wsPort" : 7891,
     "host"	 : "carbonohost",
-    "basePath" : "carbono-auth",
+    "basePath" : "mission-control",
     "etcd": {
         "host": "carbonohost",
         "port": 7892,
