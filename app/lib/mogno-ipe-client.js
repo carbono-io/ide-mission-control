@@ -19,7 +19,7 @@ var pjson = require('../../package.json');
  */
 exports.create = function (ipeURL, proj, alias, cb) {
     if (ipeURL) {
-        var url = ipeURL + '/container';
+        var url = 'http://' + ipeURL + '/container';
         var headers = {
             'Content-Type': 'application/json',
         };
