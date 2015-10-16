@@ -73,7 +73,6 @@ function buildRequestOptions(token, authUrl) {
 module.exports.findUser = function (token, authUrl) {
     if (token) {
         var deffered = q.defer();
-
         request(
             buildRequestOptions(token, authUrl),
             function (err, res) {

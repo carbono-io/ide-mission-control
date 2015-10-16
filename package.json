@@ -15,7 +15,7 @@
   "dependencies": {
     "body-parser": "^1.13.3",
     "carbono-json-messages": "0.0.2",
-    "carbono-service-manager": "0.0.6",
+    "carbono-service-manager": "0.0.9",
     "colors": "^1.1.2",
     "config": "^1.15.0",
     "consign": "^0.1.1",
