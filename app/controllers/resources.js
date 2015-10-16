@@ -17,12 +17,8 @@ module.exports = function (app) {
         var cjm = new CJM({apiVersion: '1.0'});
         try {
             res.status(200);
-            var list = [
-                    {
-                        message: 'You are doing it wrong!' +
-                        ' Try http://carbono.io/',
-                    },
-                ];
+            var list = [ { message: 'Nothing to see here ¯\\_(ツ)_/¯' +
+                ' Try http://carbono.io/' } ];
             cjm.setData(
                    {
                        id: uuid.v4(),
@@ -49,7 +45,7 @@ module.exports = function (app) {
         var errors = [];
         var error;
         var code = 400;
-        if (!app.cm) {
+        if (!app.cm[req.params.projectId]) {
             error = {
                 domain: 'Code Machine',
                 reason: 'Code Machine not instantiated',
@@ -89,7 +85,8 @@ module.exports = function (app) {
     this.clean = function (req, res) {
         var cjm = new CJM({apiVersion: '1.0'});
         try {
-            if (!app.cm || !req.path) {
+            var _cm = app.cm[req.params.projectId];
+            if (!_cm || !req.path) {
                 res.status(400);
                 cjm.setError(buildErrors(app, req));
                 res.json(cjm);
@@ -100,7 +97,7 @@ module.exports = function (app) {
                 req.url = fileNameArr.substr(fileNameArr.indexOf(clean) +
                 clean.length);
                 // Calls Code Machine for the file
-                app.cm.clean(req, res);
+                _cm.clean(req, res);
             }
         } catch (e) {
             res.status(500).end();
@@ -120,7 +117,8 @@ module.exports = function (app) {
     this.marked = function (req, res) {
         var cjm = new CJM({apiVersion: '1.0'});
         try {
-            if (!app.cm || !req.path) {
+            var _cm = app.cm[req.params.projectId];
+            if (!_cm || !req.path) {
                 res.status(400);
                 cjm.setError(buildErrors(app, req));
                 res.json(cjm);
@@ -131,7 +129,7 @@ module.exports = function (app) {
                 req.url = fileNameArr.substr(fileNameArr.indexOf(marked) +
                 marked.length);
                 // Calls Code Machine for the file
-                app.cm.marked(req, res);
+                _cm.marked(req, res);
             }
         } catch (e) {
             res.status(500).end();
