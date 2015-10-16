@@ -36,6 +36,10 @@ var CM = function (container) {
             var ev = this.events[i];
             this.ws.on(ev, this.emit.bind(this, ev));
         }
+        for (i in this.requests) {
+            ev = this.requests[i];
+            this.ws.on(ev, this.emit.bind(this, ev));
+        }
     }.bind(this));
 
     for (var i in this.commands) {
@@ -51,17 +55,23 @@ util.inherits(CM, EventEmitter);
 
 // Events which the code machine is listening to. May be emitted in the instance
 CM.prototype.commands = [
-    'command:insertElementAtXPath',
     'command:insertElement',
+    'command:createEntityFromSchema',
+    'command:bindComponentToEntity',
+
 ];
 
 // Events which the code machine may emit. Will be re-emitted in the instance
 CM.prototype.events = [
     'control:contentUpdate',
-    'command:insertElementAtXPath/error',
-    'command:insertElementAtXPath/success',
-    'command:insertElement/error',
-    'command:insertElement/success',
+    'status:success',
+    'status:failure',
+];
+
+// Requests are emitted by the code machine. but should be intercepted and
+// treated by the mission control.
+CM.prototype.requests = [
+    'project:createMachine',
 ];
 
 /**
