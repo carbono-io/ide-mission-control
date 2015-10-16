@@ -7,7 +7,8 @@ var etcd           = require('carbono-service-manager');
 
 module.exports = function (app) {
     var RequestHelper = require('../lib/RequestHelper');
-    var reqHelper = new RequestHelper();
+    var _h = new RequestHelper();
+
     /**
      * Handles request for the creation of a project. This will communicate
      * with DCM to create a new project and get the reference of the CM
@@ -18,20 +19,95 @@ module.exports = function (app) {
      * carbono-json-message)
      */
     this.create = function (req, res) {
+
+        /**
+         * Function called to create Container
+         */
+        function _createContainer(project) {
+            // Calls DCM to create the machine
+            // Discovers with etcdManager the DCM URL
+            var dcmURL = etcd.getServiceUrl('dcm');
+
+            // Create Websocket for Code Machine
+            function _createWebsocket(path, cm){
+                app.ws.of('/mc/cm/' + project.code).on('connection',
+                    function (socket) {
+                        cm.commands.forEach(function (cmd) {
+                            socket.on(cmd, cm.emit.bind(cm, cmd));
+                        });
+
+                        cm.events.forEach(function (ev) {
+                            var listener = socket.emit.bind(socket, ev);
+
+                            cm.on(ev, listener);
+                            socket.on('disconnect', function () {
+                                 cm.removeListener(ev, listener);
+                            });
+                        });
+                    });
+            };
+            // Request business logic to create Container
+            bo.createDevContainer(dcmURL, project.code,
+                /**
+                 * Callback function for the creation of
+                 * a project on DCM
+                 * @param {Object} err - Error object
+                 * containing any errors
+                 * @param {Object} ret - Return values
+                 * from the method
+                 * @param {string} ret.markedURL - Path
+                 * for Marked files
+                 * @param {string} ret.srcURL - Path for
+                 * Clean files
+                 * @param {Object} cm - Code Machine
+                 * reference
+                 */
+                function (err, container, cm) {
+                    try {
+                        if (err) {
+                            _h.createResponse(res, 400,
+                                ['Could not create project',err,].join(' - '));
+                        } else {
+                            // Store cm and create websocket
+                            app.cm[project.code] = cm;
+                            _createWebsocket(project.code, cm);
+                            // Set cm routes to the project
+                            project.markedURL = container.markedURL;
+                            project.srcURL = container.srcURL;
+                            // Send response
+                            var payload = {
+                                id: uuid.v4(),
+                                items: [{ project: project }],
+                            };
+                            _h.createResponse(res, 201, payload);
+                        }
+                    } catch (e) {
+                        _h.createResponse( res, 500, e );
+                    }
+            });
+        }
+
+
+        /**
+         * Error Handling block
+         */
         if (req.user !== null && req.user && req.user.emails[0].value) {
-            if (reqHelper.checkMessageStructure(req)) {
+            // Check message consistency
+            if ( _h.checkMessageStructure(req) ) {
                 var userData = req.body.data.items[0];
                 userData.owner = req.user.emails[0].value;
                 var missingProperties =
-                    reqHelper.checkRequiredData(
+                    _h.checkRequiredData(
                         userData, ['owner', 'name', 'description']);
+
                 if (missingProperties.length) {
                     var errMessage = '';
                     missingProperties.forEach(function (prop) {
                         errMessage += 'Malformed request: ' + prop +
                         ' is required.\n';
                     });
-                    reqHelper.createResponse(res, 400, errMessage);
+                    _h.createResponse(res, 400, errMessage);
+
                 } else {
                     try {
                         // Discovers with etcdManager the ACCM URL
@@ -39,74 +115,23 @@ module.exports = function (app) {
                         var accm = new AccountManager(accmURL);
                         // Discover correct projectId
                         accm.createProject(userData).then(
-                            function (project) {
-                                var projectId = project.code;
-                                // Calls DCM to create the machine
-                                // Discovers with etcdManager the DCM URL
-                                var dcmURL = etcd.getServiceUrl('dcm');
-                                bo.createDevContainer(dcmURL, projectId,
-                                    /**
-                                     * Callback function for the creation of
-                                     * a project on DCM
-                                     * @param {Object} err - Error object
-                                     * containing any errors
-                                     * @param {Object} ret - Return values
-                                     * from the method
-                                     * @param {string} ret.markedURL - Path
-                                     * for Marked files
-                                     * @param {string} ret.srcURL - Path for
-                                     * Clean files
-                                     * @param {Object} cm - Code Machine
-                                     * reference
-                                     */
-                                    function (err, ret, cm) {
-                                        try {
-                                            if (err) {
-                                                reqHelper.createResponse(res,
-                                                    400,
-                                                    ['Could not create project',
-                                                    err,].join(' - '));
-                                            } else {
-                                                app.cm = cm;
-                                                project.markedURL =
-                                                ret.markedURL;
-                                                project.srcURL = ret.srcURL;
-                                                reqHelper.createResponse(res,
-                                                    201,
-                                                    {
-                                                        id: uuid.v4(),
-                                                        items: [ {
-                                                                project:
-                                                                project,
-                                                            },
-                                                        ],
-                                                    });
-                                            }
-                                        } catch (e) {
-                                            reqHelper.createResponse(res,
-                                                500, e);
-                                        }
-                                    }
-                                );
-                            },
-                            function (error) {
-                                app.cm = null;
-                                reqHelper.createResponse(res, error.code,
-                                    error.message);
+                            // If Project was created then
+                            _createContainer,
+                            // in case it failed
+                            function failedToCreateProj(e) {
+                                _h.createResponse(res, e.code, e.message);
                             }
                         );
+
                     } catch (e) {
-                        app.cm = null;
-                        reqHelper.createResponse(res, 500,
-                            e);
+                        _h.createResponse(res, 500, e);
                     }
                 }
             } else {
-                reqHelper.createResponse(res, 400, 'Malformed request');
+                _h.createResponse(res, 400, 'Malformed request');
             }
         } else {
-            reqHelper.createResponse(res, 403,
-                'Unauthorized');
+            _h.createResponse(res, 403, 'Unauthorized');
         }
     };
 

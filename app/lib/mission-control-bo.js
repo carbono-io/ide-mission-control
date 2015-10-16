@@ -58,11 +58,11 @@ var registerCMRequestListeners = function (cm) {
  * parameters filesUrl, userID, proj
  */
 var createDevContainer = function (dcmURL, project, cb) {
-    dcm.create(dcmURL, project, function (err, res) {
+    dcm.create(dcmURL, project, function (err, container) {
         var cm;
         if (!err) {
             // Todo Synchronize wit DCM
-            var path = res.data.items[0].url;
+            var path = container.data.items[0].url;
             /* Comment
             var path = url.format({
                 protocol: 'http',
@@ -71,21 +71,21 @@ var createDevContainer = function (dcmURL, project, cb) {
             });
             */
 
-            var container = {
-                id: res.containerId,
+            var config = {
+                id: container.containerId,
                 markedURL: path + '/resources/marked',
                 cleanURL: path + '/resources/clean',
                 wsURL: path,
             };
             // Instantiate CM object
-            cm = new CM(container);
+            cm = new CM(config);
             registerCMRequestListeners(cm);
-            res = {
+            container = {
                 markedURL: path + '/resources/marked',
                 srcURL: path + '/resources',
             };
         }
-        cb(err, res, cm);
+        cb(err, container, cm);
     });
 };
 

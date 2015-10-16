@@ -20,7 +20,7 @@ function buildRequest(data) {
         headers: {
             crbemail: data.owner,
         },
-        uri: path + '/projects',
+        uri: 'http://' + path + '/projects',
         method: 'POST',
         json: {
             apiVersion: pjson.version,
