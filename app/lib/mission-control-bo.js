@@ -2,51 +2,6 @@
 var CM = require('./code-machine-cli');
 var dcm = require('./ide-development-container-manager-cli');
 var ipe = require('./mogno-ipe-client');
-var etcd  = require('carbono-service-manager');
-
-/**
- * Sends an message to the IPE module requesting an specific machine to be
- * instantiated
- */
-var createUserContainer = function (component, internalRoute, cb) {
-    // Get the IPE module URL
-    var ipeURL = etcd.getServiceUrl('ipe');
-    //
-    // NOTE: The machineAlias is not necessarily the docker image name.
-    // This is the place where we sholud map machineAlias to image name
-    // (Assuming the b.o. is the one who knows everything)
-
-    // Route will be composed as <uname>/<uproject>/<internalRoute>
-    // where uname is the unique username,
-    // and uproject is the user's unique project name.
-    var uname = 'username';
-    var uproject = 'project';
-    var route = uname + '/' + uproject + '/' + internalRoute;
-
-    ipe.createMachine(
-            ipeURL,
-            component,
-            route,
-            function (err, res) {
-        // Nothing else to do?
-        if (cb) {
-            cb(err, res);
-        }
-    });
-};
-
-var registerCMRequestListeners = function (cm) {
-    var createMachineEv = 'project:createMachine';
-
-    var createMachine = function (data) {
-        var machineData = JSON.parse(data).data.items[0];
-        createUserContainer(machineData.component, machineData.route);
-    };
-
-    if (createMachineEv in cm.requests) {
-        cm.on(createMachineEv, createMachine);
-    }
-};
 
 /**
  * Pedir uma maquina pro dcm e nesse momento criar uma
@@ -57,7 +12,7 @@ var registerCMRequestListeners = function (cm) {
  *
  * parameters filesUrl, userID, proj
  */
-var createDevContainer = function (dcmURL, project, cb) {
+exports.createDevContainer = function (dcmURL, project, cb) {
     dcm.create(dcmURL, project, function (err, res) {
         var cm;
         if (!err) {
@@ -79,7 +34,6 @@ var createDevContainer = function (dcmURL, project, cb) {
             };
             // Instantiate CM object
             cm = new CM(container);
-            registerCMRequestListeners(cm);
             res = {
                 markedURL: path + '/resources/marked',
                 srcURL: path + '/resources',
@@ -89,7 +43,19 @@ var createDevContainer = function (dcmURL, project, cb) {
     });
 };
 
-module.exports = {
-    createDevContainer: createDevContainer,
-    createUserContainer: createUserContainer,
+/**
+ * Sends an message to the IPE module requesting an specific machine to be
+ * instantiated
+ */
+exports.createUserContainer = function (ipeURL, project, machineAlias, cb) {
+
+    // NOTE: The machineAlias is not necessarily the docker image name.
+    // This is the place where we sholud map machineAlias to image name
+    // (Assuming the b.o. is the one who knows everything)
+    var dockerImage = machineAlias;
+
+    ipe.create(ipeURL, project, dockerImage, function (err, res) {
+        // Nothing else to do?
+        cb(err, res);
+    });
 };
