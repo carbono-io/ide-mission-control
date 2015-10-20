@@ -3,7 +3,7 @@ module.exports = function (app) {
 
     var project = app.controllers.project;
 
-    app.post('/projects', app.authenticate, project.create);
+    app.post('/mc/projects', app.authenticate, project.create);
 
     return this;
 };

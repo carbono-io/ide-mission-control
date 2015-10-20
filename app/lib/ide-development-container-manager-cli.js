@@ -34,7 +34,7 @@ exports.list = function () {
  */
 exports.create = function (dcmURL, proj, cb) {
     if (dcmURL) {
-        var url = 'http://' + dcmURL + '/container';
+        var url = 'http://' + dcmURL + 'container';
         var headers = {
             'Content-Type': 'application/json',
         };
