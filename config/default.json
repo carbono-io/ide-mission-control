@@ -1,11 +1,11 @@
 {
     "htPort" : 7890,
     "wsPort" : 7891,
-    "host"	 : "localhost",
+    "host"	 : "carbonohost",
     "basePath" : "mission-control",
     "etcd": {
-        "host": "localhost",
-        "port": 7892,
+        "host": "carbonohost",
+        "port": 7890,
         "key" : "mc",
         "alias" : "Carbono Mission-Control",
         "dependencies" : [
