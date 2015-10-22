@@ -60,7 +60,6 @@ var AccountManager = function (accmPath) {
 AccountManager.prototype.createProject = function (data) {
     var deferred = q.defer();
     try {
-        console.log('path is', path);
         request(buildRequest(
             {
                 owner: data.owner,
@@ -80,7 +79,6 @@ AccountManager.prototype.createProject = function (data) {
                                 description: data.project.description,
                             });
                         } catch (e) {
-                            console.log('loc 41', e);
                             deferred.reject({
                                 code: 500,
                                 message: e,
@@ -89,13 +87,11 @@ AccountManager.prototype.createProject = function (data) {
                     } else {
                         try {
                             jsonRes = res.body;
-                            console.log('jsonRes', jsonRes);
                             deferred.reject({
                                 code: jsonRes.error.code,
                                 message: jsonRes.error.message,
                             });
                         } catch (e) {
-                            console.log('loc 31', e);
                             deferred.reject({
                                 code: 500,
                                 message: e,
@@ -103,7 +99,6 @@ AccountManager.prototype.createProject = function (data) {
                         }
                     }
                 } else {
-                    console.log('loc 51');
                     deferred.reject({
                         code: 500,
                         message: 'Could not create project',

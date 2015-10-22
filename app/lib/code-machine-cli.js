@@ -94,9 +94,7 @@ CM.prototype.marked =  function (req, res) {
  * @param {Object} res - Response containing the requested file
  */
 CM.prototype.clean =  function (req, res) {
-    console.log(req.url);
     var cmURL = this.container.cleanURL + req.url;
-    console.log(cmURL);
     req.pipe(request(cmURL)).pipe(res);
 };
 

@@ -55,7 +55,7 @@ function buildRequestOptions(token, authUrl) {
     });
 
     return {
-        uri: 'http://' + authUrl + '/bearer/validate',
+        uri: 'http://' + authUrl + 'bearer/validate',
         method: 'POST',
         json: cjm.toObject(),
     };

@@ -82,7 +82,6 @@ module.exports = function (app) {
                             _h.createResponse(res, 201, payload);
                         }
                     } catch (e) {
-                        console.log('ponto 1', e);
                         _h.createResponse( res, 500, e );
                     }
             });
@@ -93,8 +92,6 @@ module.exports = function (app) {
          * Error Handling block
          */
         if (req.user !== null && req.user && req.user.emails[0].value) {
-            // Check message consistency
-            console.log('user', req.user);
             if ( _h.checkMessageStructure(req) ) {
                 var userData = req.body.data.items[0];
                 userData.owner = req.user.emails[0].value;
@@ -112,7 +109,6 @@ module.exports = function (app) {
 
                 } else {
                     try {
-                        console.log('user data', userData);
                         // Discovers with etcdManager the ACCM URL
                         var accmURL = etcd.getServiceUrl('accm');
                         var accm = new AccountManager(accmURL);
@@ -122,13 +118,11 @@ module.exports = function (app) {
                             _createContainer,
                             // in case it failed
                             function failedToCreateProj(e) {
-                                console.log('failed 3', e);
                                 _h.createResponse(res, e.code, e.message);
                             }
                         );
 
                     } catch (e) {
-                        console.log('ponto 2', e);
                         _h.createResponse(res, 500, e);
                     }
                 }
