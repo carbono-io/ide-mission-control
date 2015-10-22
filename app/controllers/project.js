@@ -30,7 +30,7 @@ module.exports = function (app) {
 
             // Create Websocket for Code Machine
             function _createWebsocket(path, cm){
-                app.ws.of('/mc/cm/' + project.code).on('connection',
+                app.ws.of('/mc/cm-ws/' + project.code).on('connection',
                     function (socket) {
                         cm.commands.forEach(function (cmd) {
                             socket.on(cmd, cm.emit.bind(cm, cmd));
