@@ -135,61 +135,6 @@ module.exports = function (app) {
             res.status(500).end();
         }
     };
-    /**
-     * Future Granphical User Interface (GUI)
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object (will carry a success or error
-     * carbono-json-message)
-     */
-    this.gui = function (req, res) {
-        var cjm = new CJM({apiVersion: '1.0'});
-        try {
-            res.status(200);
-            var list = [
-                    {
-                        message: 'Graphical user interface.',
-                    },
-                ];
-            cjm.setData(
-                   {
-                       id: uuid.v4(),
-                       items: list,
-                   }
-                );
-            res.json(cjm);
-            res.end();
-        } catch (e) {
-            res.status(500).end();
-        }
-    };
-
-    /**
-     * Future Comand Line Interface (CLI)
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object (will carry a success or error
-     * carbono-json-message)
-     */
-    this.cli = function (req, res) {
-        var cjm = new CJM({apiVersion: '1.0'});
-        try {
-            res.status(200);
-            var list = [
-                    {
-                        message: 'Command line interface.',
-                    },
-                ];
-            cjm.setData(
-                   {
-                       id: uuid.v4(),
-                       items: list,
-                   }
-                );
-            res.json(cjm);
-            res.end();
-        } catch (e) {
-            res.status(500).end();
-        }
-    };
 
     return this;
 };
