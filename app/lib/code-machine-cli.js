@@ -66,6 +66,12 @@ CM.prototype.events = [
     'control:contentUpdate',
     'status:success',
     'status:failure',
+    'command:insertElement/success',
+    'command:insertElement/error',
+    'command:createEntityFromSchema/success',
+    'command:createEntityFromSchema/error',
+    'command:bindComponentToEntity/success',
+    'command:bindComponentToEntity/error',
 ];
 
 // Requests are emitted by the code machine. but should be intercepted and
